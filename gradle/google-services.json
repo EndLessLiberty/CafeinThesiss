@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "389062168850",
+    "firebase_url": "https://tezcafe-in.firebaseio.com",
+    "project_id": "tezcafe-in",
+    "storage_bucket": "tezcafe-in.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:389062168850:android:9c992395c1412a85",
+        "android_client_info": {
+          "package_name": "com.example.weysi.firabaseuserregistration"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "389062168850-0aa9r4tneose3rknfgkvm7lur4oqnu4p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWhfFJjRBzr4P3s1XSX5OowJPjbZHKkUs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

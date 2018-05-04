@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "231717847344",
+    "firebase_url": "https://upheld-momentum-158115.firebaseio.com",
+    "project_id": "upheld-momentum-158115",
+    "storage_bucket": "upheld-momentum-158115.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:231717847344:android:9c992395c1412a85",
+        "android_client_info": {
+          "package_name": "com.example.weysi.firabaseuserregistration"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "231717847344-pbth866pp8b46f2pmo7pjsgvnl3ev5im.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAj0l-kaPymtPRf_WuMCtRKGfm-nu2rac"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

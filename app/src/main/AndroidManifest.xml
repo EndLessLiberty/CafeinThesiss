@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.weysi.firabaseuserregistration">
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application
+        android:name=".MyApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher_foreground"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/cafein"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".activitys.SignUpActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service android:name=".FirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <activity android:name=".activitys.LoginActivity" />
+        <activity android:name=".activitys.MainPageActivity" />
+        <activity android:name=".activitys.InPlaceCheckInActivity" />
+        <activity android:name=".activitys.NearbyPlaceActivity" />
+        <activity android:name=".activitys.ProfileSettingsActivity" />
+        <activity android:name=".activitys.TimeLineActivity" />
+        <activity android:name=".activitys.AnotherUserProfileActivity"/>
+        <activity android:name=".activitys.ChatActivity" />
+        <activity android:name=".activitys.MessageActivity"/>
+        <activity android:name=".activitys.PersonalUserProfileActivity"/>
+        <activity android:name=".activitys.NotificationsActivity">
+            <intent-filter>
+                <action android:name="incom.example.weysi.firabaseuserregistration.activitys_TARGET_NOTIFICATION" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
