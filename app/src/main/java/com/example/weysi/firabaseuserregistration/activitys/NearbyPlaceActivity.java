@@ -105,6 +105,7 @@ public class NearbyPlaceActivity extends AppCompatActivity {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         UserInformation userInformation= dataSnapshot.child(firebaseAuth.getCurrentUser().getUid()).getValue(UserInformation.class);
+                                        final TimeLineCheckInInformation[] temptlcii = new TimeLineCheckInInformation[1];
                                         databaseReferencePlaceID.child(data.getPlaceId()).child(firebaseAuth.getCurrentUser().getUid()).setValue(userInformation);
                                         final HashMap<String,Object> checkInInfo=new HashMap<>();
                                         final String id=databaseCheckIn.push().getKey();
@@ -120,9 +121,13 @@ public class NearbyPlaceActivity extends AppCompatActivity {
                                         databaseCheckIn.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                                TimeLineCheckInInformation tlcii= dataSnapshot.getValue(TimeLineCheckInInformation.class);
-                                                tlcii.setCheckInTime((tlcii.getCheckInTime()*(-1)));
-                                                databaseCheckIn.child(id).setValue(tlcii);
+                                                temptlcii[0]= dataSnapshot.getValue(TimeLineCheckInInformation.class);
+                                                temptlcii[0].setCheckInTime((temptlcii[0].getCheckInTime()*(-1)));
+                                                databaseCheckIn.child(id).setValue(temptlcii[0]);
+                                                PlaceInformation placeInformation=new PlaceInformation(data.getName(),data.getPlaceId());
+                                                databaseReferencePlace.child(data.getPlaceId()).setValue(placeInformation);
+                                                databaseReferenceUsersID.child(firebaseAuth.getCurrentUser().getUid()).child(id).setValue(temptlcii[0]);
+
                                             }
 
                                             @Override
@@ -131,9 +136,6 @@ public class NearbyPlaceActivity extends AppCompatActivity {
                                             }
                                         });
 
-                                        PlaceInformation placeInformation=new PlaceInformation(data.getName(),data.getPlaceId());
-                                        databaseReferencePlace.child(data.getPlaceId()).setValue(placeInformation);
-                                        databaseReferenceUsersID.child(firebaseAuth.getCurrentUser().getUid()).child(id).setValue(checkInInfo);
 
 
                                     }

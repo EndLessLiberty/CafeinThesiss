@@ -51,6 +51,8 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
     private EditText yeniSifreDuzenle;
     private EditText yeniSifreTekrarDuzenle;
     private EditText eskiSifreDuzenle;
+    private Bitmap bmp;
+    private byte [] byteArray;
     private StorageReference mStorage;
     private DatabaseReference mUserDatabase;
     private FirebaseAuth firebaseAuth;
@@ -90,7 +92,10 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
         // alttaki iki satır yeni
         //  ImageView imageView=(ImageView)findViewById(R.id.imageViewHeader);
         // imageViewPicture.setImageBitmap(imageView.getDrawingCache());
-        final long ONE_MEGABYTE = 720 * 1024;
+        byteArray=getIntent().getByteArrayExtra("profile_photo");
+        bmp=BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+
+       /* final long ONE_MEGABYTE = 720 * 1024;
         mStorage.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {                 // Data for "images/island.jpg" is returns, use this as needed
@@ -103,7 +108,7 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
             public void onFailure(@NonNull Exception exception) {
                 //  imageViewHeader.setImageResource(R.mipmap.ic_launcher_round);
             }
-        });
+        });*/
         fotoDegistir.setOnClickListener(this);
         circleImageViewPicture.setOnClickListener(this);
         kaydet.setOnClickListener(this);
