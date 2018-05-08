@@ -49,6 +49,7 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
     private ImageButton buttonZamanTuneli;
     private ImageButton buttonMessages;
     private ImageButton buttonNotifications;
+    private ImageButton buttonStatistics;
     private de.hdodenhof.circleimageview.CircleImageView circleImageView;
     private Bitmap bmp;
     private byte[] byteArray;
@@ -87,6 +88,7 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
         buttonZamanTuneli = (ImageButton) findViewById(R.id.imageButtonTimeLine);
         buttonMessages= (ImageButton) findViewById(R.id.imageButtonMessages);
         buttonNotifications=(ImageButton) findViewById(R.id.imageButtonNotifications);
+        buttonStatistics=(ImageButton)findViewById(R.id.imageButtonStatistics);
 
         //header = getLayoutInflater().inflate(R.layout.header, null);
         circleImageView = (de.hdodenhof.circleimageview.CircleImageView)findViewById(R.id.profile_image);
@@ -99,6 +101,7 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
         buttonMessages.setOnClickListener(this);
         buttonNotifications.setOnClickListener(this);
         circleImageView.setOnClickListener(this);
+        buttonStatistics.setOnClickListener(this);
 
 
 
@@ -160,6 +163,9 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
         }
         else if(view==buttonNotifications){
             startActivity(new Intent(this, NotificationsActivity.class));
+        }
+        else if(view==buttonStatistics){
+            //startActivity(new Intent (this,denemeActivity.class));
         }
     }
 

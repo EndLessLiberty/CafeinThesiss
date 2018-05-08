@@ -55,7 +55,6 @@ public class PlaceClass extends AsyncTask< String,String, List<Data>> {
                 //data.setPlaceId(dataList.get(i).getPlaceId());
                 // Resim indiriyoruz
                 input = new java.net.URL(dataList.get(i).getUrl()).openStream();
-
                 dataList.get(i).setBitmap(BitmapFactory.decodeStream(input));
                 //data.setBitmap(BitmapFactory.decodeStream(input));
                 //dataList1.add(data);
