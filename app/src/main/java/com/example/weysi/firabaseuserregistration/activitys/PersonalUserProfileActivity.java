@@ -65,6 +65,7 @@ public class PersonalUserProfileActivity extends AppCompatActivity{
         user_id = getIntent().getStringExtra("UserId");
 
         byteArray=getIntent().getByteArrayExtra("profile_photo");
+        if(byteArray!=null)
         bmp=BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         mRootRef = FirebaseDatabase.getInstance().getReference();
 

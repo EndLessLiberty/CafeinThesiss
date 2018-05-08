@@ -78,8 +78,10 @@ public class NearbyPlaceActivity extends AppCompatActivity {
         mMessage=(EditText)findViewById(R.id.edit_text_checkin_message);
 
         byteArray=getIntent().getByteArrayExtra("profile_photo");
-        //bmp= BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+        if(byteArray!=null)
         sUserPhoto= Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+
         lv = (ListView) findViewById(R.id.listView1);
 
         lv.setClickable(true);

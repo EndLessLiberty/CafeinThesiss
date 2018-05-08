@@ -6,26 +6,42 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.example.weysi.firabaseuserregistration.R;
+import com.example.weysi.firabaseuserregistration.informations.UserInformation;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import java.util.ArrayList;
 
 public class MainPageActivity extends AppCompatActivity implements View.OnClickListener {
 
     //firebase auth object
+
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
     private StorageReference storageReference;
+    private DatabaseReference mUserDatabase;
    // private View header;
-
     //view objects
 
     private Button buttonLogout;
@@ -40,8 +56,6 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
 
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +65,8 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
         firebaseAuth = FirebaseAuth.getInstance();
 
         //if the user is not logged in
+
+      //  mTimeLineRecylerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         //that means current user will return null
         if (firebaseAuth.getCurrentUser() == null) {
             //closing this activity
@@ -63,9 +79,9 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
         firebaseUser = firebaseAuth.getCurrentUser();
 
         storageReference = FirebaseStorage.getInstance().getReference(firebaseUser.getUid());
-
+        mUserDatabase = FirebaseDatabase.getInstance().getReference("Users");
+        mUserDatabase.keepSynced(true);
         //initializing views
-
         buttonLogout = (Button) findViewById(R.id.buttonLogout);
         buttonGetPlace = (ImageButton) findViewById(R.id.imageButtonGetNearbyPlaces);
         buttonZamanTuneli = (ImageButton) findViewById(R.id.imageButtonTimeLine);
@@ -74,19 +90,9 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
 
         //header = getLayoutInflater().inflate(R.layout.header, null);
         circleImageView = (de.hdodenhof.circleimageview.CircleImageView)findViewById(R.id.profile_image);
-        //
-
-        /*actionBar = getSupportActionBar();
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setDisplayUseLogoEnabled(false);
-        actionBar.setDisplayHomeAsUpEnabled(false);
-        actionBar.setDisplayShowCustomEnabled(true);z
-        actionBar.setCustomView(header);*/
-
-
-
 
         //adding listener to button
+
         buttonLogout.setOnClickListener(this);
         buttonGetPlace.setOnClickListener(this);
         buttonZamanTuneli.setOnClickListener(this);
@@ -95,7 +101,11 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
         circleImageView.setOnClickListener(this);
 
 
+
+
+
     }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -106,9 +116,6 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
             public void onSuccess(byte[] bytes) {                 // Data for "images/island.jpg" is returns, use this as needed
                 bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 byteArray=bytes;
-                // imageViewProfileImage.setImageBitmap(bmp);
-
-                //     actionBar.setIcon(imageViewProfileImage.getDrawable());
 
                 if (bmp != null)
                     circleImageView.setImageBitmap(bmp);
@@ -139,7 +146,7 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
             intent.putExtra("profile_photo",byteArray);
             startActivity(intent);
         } else if (view == circleImageView) {
-            Intent intent = new Intent(getApplicationContext(), PersonalUserProfileActivity.class);
+            Intent intent = new Intent(getApplicationContext(), ProfileSettingsActivity.class);
             intent.putExtra("profile_photo",byteArray);
             intent.putExtra("UserId",firebaseUser.getUid());
             startActivity(intent);
@@ -155,6 +162,5 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
             startActivity(new Intent(this, NotificationsActivity.class));
         }
     }
-
 
 }

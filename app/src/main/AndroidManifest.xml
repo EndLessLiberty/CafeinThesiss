@@ -35,17 +35,18 @@
         <activity android:name=".activitys.NearbyPlaceActivity" />
         <activity android:name=".activitys.ProfileSettingsActivity" />
         <activity android:name=".activitys.TimeLineActivity" />
-        <activity android:name=".activitys.AnotherUserProfileActivity"/>
+        <activity android:name=".activitys.AnotherUserProfileActivity" />
         <activity android:name=".activitys.ChatActivity" />
-        <activity android:name=".activitys.MessageActivity"/>
-        <activity android:name=".activitys.PersonalUserProfileActivity"/>
+        <activity android:name=".activitys.MessageActivity" />
+        <activity android:name=".activitys.PersonalUserProfileActivity" />
         <activity android:name=".activitys.NotificationsActivity">
             <intent-filter>
-                <action android:name="incom.example.weysi.firabaseuserregistration.activitys_TARGET_NOTIFICATION" />
+                <action android:name="OpenNotificationActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".activitys.SearchActivity"></activity>
     </application>
 
 </manifest>
