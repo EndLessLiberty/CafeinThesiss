@@ -89,11 +89,13 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
         yeniSifreDuzenle = (EditText) findViewById(R.id.yeniSifreDuzenle);
         yeniSifreTekrarDuzenle = (EditText) findViewById(R.id.yeniSifreTekrarDuzenle);
         eskiSifreDuzenle = (EditText)findViewById(R.id.eskiSifreDuzenle);
+
         // alttaki iki satır yeni
         //  ImageView imageView=(ImageView)findViewById(R.id.imageViewHeader);
         // imageViewPicture.setImageBitmap(imageView.getDrawingCache());
         byteArray=getIntent().getByteArrayExtra("profile_photo");
         bmp=BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+        circleImageViewPicture.setImageBitmap(bmp);
 
        /* final long ONE_MEGABYTE = 720 * 1024;
         mStorage.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
@@ -101,7 +103,7 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
             public void onSuccess(byte[] bytes) {                 // Data for "images/island.jpg" is returns, use this as needed
                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 if(bmp!=null)
-                    circleImageViewPicture.setImageBitmap(bmp);
+
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -116,8 +118,8 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
 
 
         mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(firebaseUser.getUid());
-
         mUserDatabase.keepSynced(true);
+
         mUserDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -255,7 +257,6 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
     private void uploadFile() {
         //if there is a file to upload
 
-
         if (filePath != null) {
             //displaying a progress dialog while upload is going on
             final ProgressDialog progressDialog = new ProgressDialog(this);
@@ -297,7 +298,6 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
                         }
                     });
         }
-        //if there is not any file
         else {
             //you can display an error toast
         }

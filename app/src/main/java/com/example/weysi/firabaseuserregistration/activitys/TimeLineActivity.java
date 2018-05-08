@@ -116,8 +116,11 @@ public class TimeLineActivity extends AppCompatActivity {
 
                     for(int i=0;i<friendsId.length;i++)
                     {
-                        if(friendsId[i].compareTo(tlcii.getUserId())==0)
+                        if(friendsId[i].compareTo(tlcii.getUserId())==0 || tlcii.getUserId().compareTo(mCurrentUserId)==0)
+                        {
                             isFriend=true;
+                            break;
+                        }
                     }
 
                     if(isFriend)

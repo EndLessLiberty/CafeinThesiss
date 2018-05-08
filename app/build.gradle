@@ -30,7 +30,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-
+    compile 'com.numetriclabz.numandroidcharts:numandroidcharts:1.0.9'
     compile 'com.google.gms:google-services:3.1.2'
     compile 'org.jsoup:jsoup:1.7.3'
     compile 'com.googlecode.json-simple:json-simple:1.1'
