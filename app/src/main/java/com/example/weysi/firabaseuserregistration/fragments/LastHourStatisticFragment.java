@@ -52,7 +52,7 @@ public class LastHourStatisticFragment extends Fragment{
 
     }
 
-    public static class lastHourStatisticViewHolder extends RecyclerView.ViewHolder {
+    /*public static class lastHourStatisticViewHolder extends RecyclerView.ViewHolder {
 
         View mView;
 
@@ -101,5 +101,5 @@ public class LastHourStatisticFragment extends Fragment{
         }
 
 
-    }
+    }*/
 }

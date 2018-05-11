@@ -3,7 +3,9 @@ package com.example.weysi.firabaseuserregistration.activitys;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -91,6 +93,7 @@ public class TimeLineActivity extends AppCompatActivity {
         });
 
 
+
         mTimeLineListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -101,7 +104,7 @@ public class TimeLineActivity extends AppCompatActivity {
                 intent.putExtra("placeID3", placeInformation.getPlaceID());
 
                 startActivity(intent);*/
-            }
+        }
         });
 
         mCheckInsDatabase.addValueEventListener(new ValueEventListener() {
@@ -112,14 +115,15 @@ public class TimeLineActivity extends AppCompatActivity {
                     boolean isFriend=false;
 
                     TimeLineCheckInInformation tlcii = postSnapshot.getValue(TimeLineCheckInInformation.class);
-
-
-                    for(int i=0;i<friendsId.length;i++)
+                    if(tlcii.getUserId().compareTo(mCurrentUserId)==0)
+                        isFriend=true;
+                    else if(friendsId.length!=0)
                     {
-                        if(friendsId[i].compareTo(tlcii.getUserId())==0 || tlcii.getUserId().compareTo(mCurrentUserId)==0)
-                        {
-                            isFriend=true;
-                            break;
+                        for(int i=0;i<friendsId.length;i++) {
+                            if (friendsId[i].compareTo(tlcii.getUserId()) == 0) {
+                                isFriend = true;
+                                break;
+                            }
                         }
                     }
 
@@ -139,7 +143,6 @@ public class TimeLineActivity extends AppCompatActivity {
 
             }
         });
-
 
 
     }

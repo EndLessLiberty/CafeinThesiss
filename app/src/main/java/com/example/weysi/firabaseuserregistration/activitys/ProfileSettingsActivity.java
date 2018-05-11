@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -34,6 +35,7 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class ProfileSettingsActivity extends AppCompatActivity implements View.OnClickListener{
@@ -51,14 +53,18 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
     private EditText yeniSifreDuzenle;
     private EditText yeniSifreTekrarDuzenle;
     private EditText eskiSifreDuzenle;
+    private de.hdodenhof.circleimageview.CircleImageView circleImageViewPicture;
+
+    private Uri filePath;
     private Bitmap bmp;
     private byte [] byteArray;
+    private String sUserPhoto;
+
     private StorageReference mStorage;
     private DatabaseReference mUserDatabase;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
-    private de.hdodenhof.circleimageview.CircleImageView circleImageViewPicture;
-    private Uri filePath;
+
     private UserInformation userInformation ;
 
 
@@ -90,27 +96,10 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
         yeniSifreTekrarDuzenle = (EditText) findViewById(R.id.yeniSifreTekrarDuzenle);
         eskiSifreDuzenle = (EditText)findViewById(R.id.eskiSifreDuzenle);
 
-        // alttaki iki satır yeni
-        //  ImageView imageView=(ImageView)findViewById(R.id.imageViewHeader);
-        // imageViewPicture.setImageBitmap(imageView.getDrawingCache());
         byteArray=getIntent().getByteArrayExtra("profile_photo");
         bmp=BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         circleImageViewPicture.setImageBitmap(bmp);
 
-       /* final long ONE_MEGABYTE = 720 * 1024;
-        mStorage.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {                 // Data for "images/island.jpg" is returns, use this as needed
-                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                if(bmp!=null)
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                //  imageViewHeader.setImageResource(R.mipmap.ic_launcher_round);
-            }
-        });*/
         fotoDegistir.setOnClickListener(this);
         circleImageViewPicture.setOnClickListener(this);
         kaydet.setOnClickListener(this);
@@ -140,8 +129,6 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
                 telefonDuzenle.setText(phone);
                 dogumTarihiDuzenle.setText(dogumTarihi);
 
-                //mName.setText(name);
-                //mStatus.setText(status);
             }
 
             @Override
@@ -192,7 +179,27 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
                 circleImageViewPicture.setImageBitmap(bitmap);
-                uploadFile();
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byteArray = stream.toByteArray();
+                bitmap.recycle();
+                sUserPhoto= Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+                mUserDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        userInformation=dataSnapshot.getValue(UserInformation.class);
+                        userInformation.setImage(sUserPhoto);
+                        mUserDatabase.setValue(userInformation);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+                //uploadFile();
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -254,52 +261,51 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
 
         }
 
-    private void uploadFile() {
-        //if there is a file to upload
+        /*private void uploadFile() {
+            //if there is a file to upload
 
-        if (filePath != null) {
-            //displaying a progress dialog while upload is going on
-            final ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle("Uploading");
-            progressDialog.show();
+            if (filePath != null) {
+                //displaying a progress dialog while upload is going on
+                final ProgressDialog progressDialog = new ProgressDialog(this);
+                progressDialog.setTitle("Uploading");
+                progressDialog.show();
 
 
-            mStorage.putFile(filePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            //if the upload is successfull
-                            //hiding the progress dialog
-                            progressDialog.dismiss();
+                mStorage.putFile(filePath)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                //if the upload is successfull
+                                //hiding the progress dialog
+                                progressDialog.dismiss();
 
-                            //and displaying a success toast
-                            Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            //if the upload is not successfull
-                            //hiding the progress dialog
-                            progressDialog.dismiss();
+                                //and displaying a success toast
+                                Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                //if the upload is not successfull
+                                //hiding the progress dialog
+                                progressDialog.dismiss();
 
-                            //and displaying error message
-                            Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            //calculating progress percentage
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                                //and displaying error message
+                                Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        })
+                        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                                //calculating progress percentage
+                                double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
 
-                            //displaying percentage in progress dialog
-                            progressDialog.setMessage("Uploaded " + ((int) progress) + "%...");
-                        }
-                    });
-        }
-        else {
-            //you can display an error toast
-        }
+                                //displaying percentage in progress dialog
+                                progressDialog.setMessage("Uploaded " + ((int) progress) + "%...");
+                            }
+                        });
+            } else {
+            }
 
-    }}
+        }*/
+    }

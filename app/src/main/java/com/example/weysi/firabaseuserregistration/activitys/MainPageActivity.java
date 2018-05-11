@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -31,6 +32,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 public class MainPageActivity extends AppCompatActivity implements View.OnClickListener {
@@ -41,16 +43,15 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
     private FirebaseUser firebaseUser;
     private StorageReference storageReference;
     private DatabaseReference mUserDatabase;
-   // private View header;
-    //view objects
 
-    private Button buttonLogout;
+    private ImageButton buttonLogout;
     private ImageButton buttonGetPlace;
     private ImageButton buttonZamanTuneli;
     private ImageButton buttonMessages;
     private ImageButton buttonNotifications;
     private ImageButton buttonStatistics;
     private de.hdodenhof.circleimageview.CircleImageView circleImageView;
+
     private Bitmap bmp;
     private byte[] byteArray;
 
@@ -62,13 +63,8 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_page);
 
-        //initializing firebase authentication object
         firebaseAuth = FirebaseAuth.getInstance();
 
-        //if the user is not logged in
-
-      //  mTimeLineRecylerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        //that means current user will return null
         if (firebaseAuth.getCurrentUser() == null) {
             //closing this activity
             finish();
@@ -83,18 +79,15 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
         mUserDatabase = FirebaseDatabase.getInstance().getReference("Users");
         mUserDatabase.keepSynced(true);
         //initializing views
-        buttonLogout = (Button) findViewById(R.id.buttonLogout);
+        buttonLogout = (ImageButton) findViewById(R.id.imageButtonLogOut);
         buttonGetPlace = (ImageButton) findViewById(R.id.imageButtonGetNearbyPlaces);
         buttonZamanTuneli = (ImageButton) findViewById(R.id.imageButtonTimeLine);
         buttonMessages= (ImageButton) findViewById(R.id.imageButtonMessages);
         buttonNotifications=(ImageButton) findViewById(R.id.imageButtonNotifications);
         buttonStatistics=(ImageButton)findViewById(R.id.imageButtonStatistics);
-
-        //header = getLayoutInflater().inflate(R.layout.header, null);
         circleImageView = (de.hdodenhof.circleimageview.CircleImageView)findViewById(R.id.profile_image);
 
         //adding listener to button
-
         buttonLogout.setOnClickListener(this);
         buttonGetPlace.setOnClickListener(this);
         buttonZamanTuneli.setOnClickListener(this);
@@ -105,30 +98,39 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
 
 
 
+        mUserDatabase.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                UserInformation ui=dataSnapshot.getValue(UserInformation.class);
+                if(ui.getImage().compareTo("default")==0)
+                {
+                    bmp=BitmapFactory.decodeResource(getResources(), R.drawable.default_avatar);
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    byteArray = stream.toByteArray();
+                    bmp.recycle();
 
+                }
+                else
+                {
+                    byteArray = Base64.decode(ui.getImage(), Base64.DEFAULT);
+                    bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                    circleImageView.setImageBitmap(bmp);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        final long ONE_MEGABYTE = 720 * 1024;
 
-        storageReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {                 // Data for "images/island.jpg" is returns, use this as needed
-                bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                byteArray=bytes;
-
-                if (bmp != null)
-                    circleImageView.setImageBitmap(bmp);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                //  imageViewHeader.setImageResource(R.mipmap.ic_launcher_round);
-            }
-        });
 
     }
 
@@ -149,7 +151,7 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
             intent.putExtra("profile_photo",byteArray);
             startActivity(intent);
         } else if (view == circleImageView) {
-            Intent intent = new Intent(getApplicationContext(), ProfileSettingsActivity.class);
+            Intent intent = new Intent(getApplicationContext(), PersonalUserProfileActivity.class);
             intent.putExtra("profile_photo",byteArray);
             intent.putExtra("UserId",firebaseUser.getUid());
             startActivity(intent);

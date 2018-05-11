@@ -19,9 +19,13 @@ import com.example.weysi.firabaseuserregistration.R;
 import com.example.weysi.firabaseuserregistration.informations.GetTimeAgo;
 import com.example.weysi.firabaseuserregistration.informations.PlaceInformation;
 import com.example.weysi.firabaseuserregistration.informations.TimeLineCheckInInformation;
+import com.example.weysi.firabaseuserregistration.informations.UserInformation;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +40,7 @@ public class PersonelTimeLineFragment extends Fragment {
     private RecyclerView recyclerViewCheckIns;
     RecyclerView.Adapter adapter;
     private DatabaseReference databaseCheckIns;
+    private DatabaseReference databaseUser;
     private List<PlaceInformation> list;
     private View mMainView;
     private String targetUserId;
@@ -56,6 +61,7 @@ public class PersonelTimeLineFragment extends Fragment {
 
         databaseCheckIns = FirebaseDatabase.getInstance().getReference().child("UsersCheckIns").child(targetUserId);
         databaseCheckIns.keepSynced(true);
+        databaseUser=FirebaseDatabase.getInstance().getReference("Users");
 
         recyclerViewCheckIns.setHasFixedSize(true);
 
@@ -70,16 +76,27 @@ public class PersonelTimeLineFragment extends Fragment {
             @Override
             protected void populateViewHolder(final TimeLineViewHolder viewHolder, final TimeLineCheckInInformation model, int position) {
 
-                String time = (String) (GetTimeAgo.getTimeAgo(model.getCheckInTime() * (-1), getContext()));
-                byte[] encodeByte = Base64.decode(model.getUserPhoto(), Base64.DEFAULT);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+                final String time = (String) (GetTimeAgo.getTimeAgo(model.getCheckInTime() * (-1), getContext()));
 
-                viewHolder.setCircleImageViewUserPhoto(bitmap);
-                viewHolder.setEditTextPlace(model.getPlaceName());
-                viewHolder.setTextViewTime(time);
-                viewHolder.setTextViewUserName(model.getUserName());
-                viewHolder.setTextViewUserMessage(model.getMessage());
+                databaseUser.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        UserInformation ui = dataSnapshot.child(model.getUserId()).getValue(UserInformation.class);
+                        byte[] encodeByte = Base64.decode(ui.getImage(), Base64.DEFAULT);
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
 
+                        viewHolder.setCircleImageViewUserPhoto(bitmap);
+                        viewHolder.setEditTextPlace(model.getPlaceName());
+                        viewHolder.setTextViewTime(time);
+                        viewHolder.setTextViewUserName(model.getUserName());
+                        viewHolder.setTextViewUserMessage(model.getMessage());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
 
             }
         };

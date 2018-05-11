@@ -34,6 +34,7 @@
             app:civ_border_color="#FF000000"
             app:civ_border_width="2dp" />
 
+
     </android.support.v7.widget.Toolbar>
 
 
@@ -234,21 +235,22 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="78dp" />
 
-    <Button
-        android:id="@+id/buttonLogout"
-        android:layout_width="84dp"
-        android:layout_height="35dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+    <ImageButton
+        android:id="@+id/imageButtonLogOut"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:background="@color/colorPrimary"
+        android:scaleType="fitCenter"
+        android:src="@drawable/exit"
         android:text="Log Out"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/guideline8"
         app:layout_constraintEnd_toEndOf="@+id/toolbar"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.95"
         app:layout_constraintStart_toStartOf="@+id/toolbar"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.55" />
+
+
 
 </android.support.constraint.ConstraintLayout>
 

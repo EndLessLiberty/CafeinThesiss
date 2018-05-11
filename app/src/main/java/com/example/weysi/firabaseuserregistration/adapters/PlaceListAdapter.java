@@ -17,7 +17,14 @@ import android.widget.TextView;
 import com.example.weysi.firabaseuserregistration.R;
 import com.example.weysi.firabaseuserregistration.informations.GetTimeAgo;
 import com.example.weysi.firabaseuserregistration.informations.TimeLineCheckInInformation;
+import com.example.weysi.firabaseuserregistration.informations.UserInformation;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -29,13 +36,17 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class PlaceListAdapter extends ArrayAdapter<TimeLineCheckInInformation> {
 
     private Activity context;
+    private DatabaseReference mUserDB;
     private List<TimeLineCheckInInformation> timeLineCheckInInformationList;
+    private Bitmap bitmap;
+    private byte []byteArray;
 
 
     public PlaceListAdapter(@NonNull Activity context, List<TimeLineCheckInInformation> timeLineCheckInInformationList) {
         super(context, R.layout.single_check_in_layout, timeLineCheckInInformationList);
         this.context=context;
         this.timeLineCheckInInformationList=timeLineCheckInInformationList;
+        mUserDB= FirebaseDatabase.getInstance().getReference("Users");
 
     }
 
@@ -44,22 +55,43 @@ public class PlaceListAdapter extends ArrayAdapter<TimeLineCheckInInformation> {
         LayoutInflater inflater = context.getLayoutInflater();
         View listViewItem = inflater.inflate(R.layout.single_check_in_layout, null, true);
 
-        EditText editTextPlace= listViewItem.findViewById(R.id.editTextCheckInPlace);
-        TextView textViewTime= listViewItem.findViewById(R.id.user_single_time);
-        TextView textViewUserName= listViewItem.findViewById(R.id.user_single_name);
-        TextView textViewUserMessage= listViewItem.findViewById(R.id.user_single_status);
-        CircleImageView circleImageViewUserPhoto= listViewItem.findViewById(R.id.user_single_image);
+        final EditText editTextPlace= listViewItem.findViewById(R.id.editTextCheckInPlace);
+        final TextView textViewTime= listViewItem.findViewById(R.id.user_single_time);
+        final TextView textViewUserName= listViewItem.findViewById(R.id.user_single_name);
+        final TextView textViewUserMessage= listViewItem.findViewById(R.id.user_single_status);
+        final CircleImageView circleImageViewUserPhoto= listViewItem.findViewById(R.id.user_single_image);
 
-        TimeLineCheckInInformation tlcii = timeLineCheckInInformationList.get(position);
-        String time = GetTimeAgo.getTimeAgo(tlcii.getCheckInTime() * (-1), context);
-        byte[] encodeByte = Base64.decode(tlcii.getUserPhoto(), Base64.DEFAULT);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+        final TimeLineCheckInInformation tlcii = timeLineCheckInInformationList.get(position);
+        final String time = GetTimeAgo.getTimeAgo(tlcii.getCheckInTime() * (-1), context);
 
-        editTextPlace.setText(tlcii.getPlaceName());
-        textViewTime.setText(time);
-        textViewUserName.setText(tlcii.getUserName());
-        textViewUserMessage.setText(tlcii.getMessage());
-        circleImageViewUserPhoto.setImageBitmap(bitmap);
+        mUserDB.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                UserInformation ui=dataSnapshot.child(tlcii.getUserId()).getValue(UserInformation.class);
+
+                if(ui.getImage().compareTo("default")==0)
+                {
+                    bitmap=BitmapFactory.decodeResource(context.getResources(), R.drawable.default_avatar);
+                }
+                else
+                {
+                    byteArray = Base64.decode(ui.getImage(), Base64.DEFAULT);
+                    bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                }
+
+                editTextPlace.setText(tlcii.getPlaceName());
+                textViewTime.setText(time);
+                textViewUserName.setText(tlcii.getUserName());
+                textViewUserMessage.setText(tlcii.getMessage());
+                circleImageViewUserPhoto.setImageBitmap(bitmap);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
 
         return listViewItem;
     }
