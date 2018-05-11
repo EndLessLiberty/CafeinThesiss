@@ -27,6 +27,7 @@ import com.example.weysi.firabaseuserregistration.informations.Data;
 import com.example.weysi.firabaseuserregistration.informations.PlaceInformation;
 import com.example.weysi.firabaseuserregistration.informations.TimeLineCheckInInformation;
 import com.example.weysi.firabaseuserregistration.informations.UserInformation;
+import com.example.weysi.firabaseuserregistration.parsers.MyCheckInAddFriendTotalThread;
 import com.example.weysi.firabaseuserregistration.parsers.PlaceClass;
 import com.example.weysi.firabaseuserregistration.R;
 import com.google.android.gms.location.places.Place;
@@ -138,6 +139,9 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
                                                 placeCheckInInfo.put("checkInTime",(temptlcii[0].getCheckInTime()));
                                                 databaseReferencePlaceID.child(data.getPlaceId()).child(firebaseAuth.getCurrentUser().getUid()).setValue(placeCheckInInfo);
                                                 databaseCheckIn.child(id).setValue(temptlcii[0]);
+                                                MyCheckInAddFriendTotalThread myCheckInAddFriendTotalThread=new MyCheckInAddFriendTotalThread(
+                                                        firebaseAuth.getCurrentUser().getUid(),temptlcii[0],id);
+                                                myCheckInAddFriendTotalThread.start();
                                                 databaseReferencePlace.addListenerForSingleValueEvent(new ValueEventListener() {
                                                     @Override
                                                     public void onDataChange(DataSnapshot dataSnapshot) {

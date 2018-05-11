@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.example.weysi.firabaseuserregistration.R;
 import com.example.weysi.firabaseuserregistration.informations.GetTimeAgo;
 import com.example.weysi.firabaseuserregistration.informations.NotificationInformation;
+import com.example.weysi.firabaseuserregistration.parsers.TimeLineThread;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -159,6 +160,9 @@ public class NotificationsActivity extends AppCompatActivity implements View.OnC
                             public void onClick(View v) {
                                 String currentDate = DateFormat.getDateTimeInstance().format(new Date());
 
+                                String a=targetUserId[0];
+                                TimeLineThread d=new TimeLineThread(currentUserId,a);
+                                d.start();
                                 Map friendsMap = new HashMap();
                                 friendsMap.put("Friends/" + currentUserId + "/" + targetUserId[0] + "/date", currentDate);
                                 friendsMap.put("Friends/" + targetUserId[0] + "/"  + currentUserId + "/date", currentDate);
