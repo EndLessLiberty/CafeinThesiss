@@ -1,6 +1,8 @@
 package com.example.weysi.firabaseuserregistration.activitys;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.drm.ProcessedData;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -45,8 +47,10 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
     private ImageButton buttonNotifications;
     private ImageButton buttonStatistics;
     private de.hdodenhof.circleimageview.CircleImageView circleImageView;
+    private String sImage;
     private Bitmap bmp;
     private byte[] byteArray;
+    private ProgressDialog pd;
 
 
 
@@ -58,11 +62,13 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_page);
 
+        pd=new ProgressDialog(this);
+        pd.setMessage("Bilgileriniz Yükleniyor...");
+        pd.setCanceledOnTouchOutside(false);
+        pd.show();
         //initializing firebase authentication object
         firebaseAuth = FirebaseAuth.getInstance();
 
-        //if the user is not logged in
-        //that means current user will return null
         if (firebaseAuth.getCurrentUser() == null) {
             //closing this activity
             finish();
@@ -87,17 +93,6 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
 
         //header = getLayoutInflater().inflate(R.layout.header, null);
         circleImageView = (de.hdodenhof.circleimageview.CircleImageView)findViewById(R.id.profile_image);
-        //
-
-        /*actionBar = getSupportActionBar();
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setDisplayUseLogoEnabled(false);
-        actionBar.setDisplayHomeAsUpEnabled(false);
-        actionBar.setDisplayShowCustomEnabled(true);z
-        actionBar.setCustomView(header);*/
-
-
-
 
         //adding listener to button
         buttonLogout.setOnClickListener(this);
@@ -112,7 +107,8 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 UserInformation ui=dataSnapshot.getValue(UserInformation.class);
-                if(ui.getImage().compareTo("default")==0)
+                sImage=ui.getImage();
+                if(sImage.compareTo("default")==0)
                 {
                     bmp=BitmapFactory.decodeResource(getResources(), R.drawable.default_avatar);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -123,10 +119,11 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
                 }
                 else
                 {
-                    byteArray = Base64.decode(ui.getImage(), Base64.DEFAULT);
+                    byteArray = Base64.decode(sImage, Base64.DEFAULT);
                     bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
                     circleImageView.setImageBitmap(bmp);
                 }
+                pd.dismiss();
             }
 
             @Override
@@ -140,26 +137,6 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onStart() {
         super.onStart();
-        final long ONE_MEGABYTE = 720 * 1024;
-
-        storageReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {                 // Data for "images/island.jpg" is returns, use this as needed
-                bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                byteArray=bytes;
-                // imageViewProfileImage.setImageBitmap(bmp);
-
-                //     actionBar.setIcon(imageViewProfileImage.getDrawable());
-
-                if (bmp != null)
-                    circleImageView.setImageBitmap(bmp);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                //  imageViewHeader.setImageResource(R.mipmap.ic_launcher_round);
-            }
-        });
 
     }
 
@@ -177,11 +154,11 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
             startActivity(new Intent(this, LoginActivity.class));
         } else if (view == buttonGetPlace) {
             Intent intent = new Intent(this, NearbyPlaceActivity.class);
-            intent.putExtra("profile_photo",byteArray);
+            //intent.putExtra("profile_photo",sImage);
             startActivity(intent);
         } else if (view == circleImageView) {
             Intent intent = new Intent(getApplicationContext(), PersonalUserProfileActivity.class);
-            intent.putExtra("profile_photo",byteArray);
+            //intent.putExtra("profile_photo",sImage);
             intent.putExtra("UserId",firebaseUser.getUid());
             startActivity(intent);
         }else if (view==buttonZamanTuneli){

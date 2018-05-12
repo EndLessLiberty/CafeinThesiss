@@ -1,11 +1,15 @@
 package com.example.weysi.firabaseuserregistration.activitys;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 
@@ -85,6 +89,7 @@ public class NotificationsActivity extends AppCompatActivity implements View.OnC
                 NotificationViewHolder.class,
                 mNotificationDatabase.orderByChild("time")
         ) {
+
             @Override
             protected void populateViewHolder(final NotificationViewHolder viewHolder, NotificationInformation model, int position) {
 
@@ -107,6 +112,21 @@ public class NotificationsActivity extends AppCompatActivity implements View.OnC
                         String time=null;
                         String requestMessage = null;
                         StringBuilder message;
+
+                        Bitmap bmp;
+                        if(thumpImage.compareTo("default")==0)
+                        {
+                            bmp= BitmapFactory.decodeResource(getResources(), R.drawable.default_avatar);
+
+                        }
+                        else
+                        {
+                            byte []byteArray = Base64.decode(thumpImage, Base64.DEFAULT);
+                            bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                        }
+
+
+
                         if (requestType[0].compareTo("friendRequest") == 0)
                         {
 
@@ -153,7 +173,7 @@ public class NotificationsActivity extends AppCompatActivity implements View.OnC
                         viewHolder.setTextName(name);
                         viewHolder.setTextMessage(requestMessage);
                         viewHolder.setTextTime(time);
-                        viewHolder.setImageUserImage(thumpImage,getApplicationContext());
+                        viewHolder.setImageUserImage(bmp);
 
                         viewHolder.buttonRequestAccept.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -305,9 +325,7 @@ public class NotificationsActivity extends AppCompatActivity implements View.OnC
 
             }
         };
-
         mNotificationList.setAdapter(notificationsRecylerViewAdapter);
-
 
     }
 
@@ -351,26 +369,31 @@ public class NotificationsActivity extends AppCompatActivity implements View.OnC
         public void setTextTime(String date){
 
             textViewRequestTime.setText(date);
+            textViewRequestTime.setVisibility(View.VISIBLE);
 
         }
 
         public void setTextName(String name){
 
             textViewRequesterName.setText(name);
+            textViewRequesterName.setVisibility(View.VISIBLE);
+
 
         }
 
         public void setTextMessage(String message){
 
             textViewRequestMessage.setText(message);
+            textViewRequestMessage.setVisibility(View.VISIBLE);
+
 
         }
 
 
-        public void setImageUserImage(String thumb_image, Context ctx){
+        public void setImageUserImage(Bitmap bitmap){
 
-            Picasso.with(ctx).load(thumb_image).placeholder(R.drawable.default_avatar).into(circleImageViewNotificationPhoto);
-
+            circleImageViewNotificationPhoto.setImageBitmap(bitmap);
+            circleImageViewNotificationPhoto.setVisibility(View.VISIBLE);
         }
 
 

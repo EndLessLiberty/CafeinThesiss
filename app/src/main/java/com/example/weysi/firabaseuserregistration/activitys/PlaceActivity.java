@@ -1,5 +1,6 @@
 package com.example.weysi.firabaseuserregistration.activitys;
 
+import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -65,6 +66,12 @@ public class PlaceActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place);
+
+        final ProgressDialog pd=new ProgressDialog(this);
+        pd.setMessage("Sayfa Bilgileri Getiriliyor...");
+        pd.setCanceledOnTouchOutside(false);
+        pd.show();
+
         imageButtonBack = (ImageButton) findViewById(R.id.imageButtonBack);
         imageButtonBack.setOnClickListener(this);
         mekanAdiTextView = (TextView)findViewById(R.id.mekanAdiTextView);
@@ -138,8 +145,9 @@ public class PlaceActivity extends AppCompatActivity implements View.OnClickList
                 pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
 
                 pieChart.setData(pieData);
-
+                pd.dismiss();
                 pieChart.animateY(3000);
+
 
             }
 
@@ -149,40 +157,11 @@ public class PlaceActivity extends AppCompatActivity implements View.OnClickList
             }
         });
 
-
-
-
-
-
-
-
-
-
-
     }
 
-
-   /* public void AddValuesToPIEENTRY(){
-
-
-        entries.add(new BarEntry(0f, 0));
-        entries.add(new BarEntry(0f, 1));
-
-         /*entries.add(new BarEntry(6f, 2));
-        entries.add(new BarEntry(8f, 3));
-        entries.add(new BarEntry(7f, 4));
-        entries.add(new BarEntry(3f, 5));
-
-    }*/
-
     public void AddValuesToPieEntryLabels(){
-
-        PieEntryLabels.add("Male");
+       PieEntryLabels.add("Male");
        PieEntryLabels.add("Female");
-       /*  PieEntryLabels.add("March");
-        PieEntryLabels.add("April");
-        PieEntryLabels.add("May");
-        PieEntryLabels.add("June");*/
 
     }
 

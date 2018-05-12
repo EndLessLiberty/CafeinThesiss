@@ -58,11 +58,10 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
 
     private double x;
     private double y;
+    private ProgressDialog pd;
     private List<CheckInInformation> checkInActivityList;
     private String message;
-    private byte [] byteArray;
-    private String sUserPhoto;
-    private Bitmap bmp;
+    private String sImage;
     private ImageButton imageButtonBack;
     private Context context;
 
@@ -71,6 +70,10 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nearby_place);
 
+        pd=new ProgressDialog(this);
+        pd.setMessage("Yakındaki Lokasyonlar Getiriliyor...");
+        pd.setCanceledOnTouchOutside(false);
+        pd.show();
         firebaseAuth = FirebaseAuth.getInstance();
         databaseReferenceUsersID=FirebaseDatabase.getInstance().getReference("UsersCheckIns");
         databaseCheckIn = FirebaseDatabase.getInstance().getReference("check");
@@ -88,9 +91,6 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
         imageButtonBack.setOnClickListener(this);
         context=this;
 
-        byteArray=getIntent().getByteArrayExtra("profile_photo");
-        //bmp= BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-        sUserPhoto= Base64.encodeToString(byteArray, Base64.DEFAULT);
         lv = (ListView) findViewById(R.id.listView1);
 
         lv.setClickable(true);
@@ -122,6 +122,7 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
                                         final UserInformation userInformation= dataSnapshot.child(firebaseAuth.getCurrentUser().getUid()).getValue(UserInformation.class);
                                         final TimeLineCheckInInformation[] temptlcii = new TimeLineCheckInInformation[1];
                                         final HashMap<String,Object> placeCheckInInfo = new HashMap<>();
+                                        sImage=userInformation.getImage();
                                         placeCheckInInfo.put("userID",userInformation.getUserID());
                                         placeCheckInInfo.put("userName",userInformation.getName());
                                         placeCheckInInfo.put("cinsiyet",userInformation.getCinsiyet());
@@ -136,7 +137,7 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
                                         checkInInfo.put("checkInTime",ServerValue.TIMESTAMP);
                                         checkInInfo.put("message",message);
                                         checkInInfo.put("checkInID",id);
-                                        checkInInfo.put("userPhoto",sUserPhoto);
+                                        checkInInfo.put("userPhoto",sImage);
                                         databaseCheckIn.child(id).setValue(checkInInfo);
                                         databaseCheckIn.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
@@ -236,7 +237,7 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
 
                 x = loc.getLatitude();
                 y = loc.getLongitude();
-                PlaceClass p = new PlaceClass(lv, x, y, NearbyPlaceActivity.this);
+                PlaceClass p = new PlaceClass(lv, x, y, NearbyPlaceActivity.this,pd);
                 p.execute();
             }
 
@@ -270,9 +271,15 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
         konumYoneticisi.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 100, konumDinleyicisi);
 
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
 
     }
+
     @Override
     protected void onPause() {
         super.onPause();

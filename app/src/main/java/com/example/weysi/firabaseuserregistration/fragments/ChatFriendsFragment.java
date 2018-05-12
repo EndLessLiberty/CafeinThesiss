@@ -2,10 +2,13 @@ package com.example.weysi.firabaseuserregistration.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,18 +93,29 @@ public class ChatFriendsFragment extends Fragment {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        final String userName = dataSnapshot.child("name").getValue().toString();
-                        String userThumb = dataSnapshot.child("image").getValue().toString();
 
+                        String sImage=dataSnapshot.child("image").getValue().toString();
+                        Bitmap bmp;
+                        final String userName = dataSnapshot.child("name").getValue().toString();
                         if(dataSnapshot.hasChild("online")) {
 
                             String userOnline = dataSnapshot.child("online").getValue().toString();
                             friendsViewHolder.setUserOnline(userOnline);
 
                         }
+                        if(sImage.compareTo("default")==0)
+                        {
+                            bmp= BitmapFactory.decodeResource(getResources(), R.drawable.default_avatar);
+
+                        }
+                        else
+                        {
+                            byte []byteArray = Base64.decode(sImage, Base64.DEFAULT);
+                            bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                        }
 
                         friendsViewHolder.setName(userName);
-                        friendsViewHolder.setUserImage(userThumb, getContext());
+                        friendsViewHolder.setUserImage(bmp);
 
                         friendsViewHolder.mView.setOnClickListener(new View.OnClickListener() {
                             @Override
