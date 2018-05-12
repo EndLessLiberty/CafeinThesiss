@@ -41,12 +41,13 @@
         <activity android:name=".activitys.PersonalUserProfileActivity" />
         <activity android:name=".activitys.NotificationsActivity">
             <intent-filter>
-                <action android:name="OpenNotificationActivity" />
+                <action android:name="incom.example.weysi.firabaseuserregistration.activitys_TARGET_NOTIFICATION" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".activitys.SearchActivity"></activity>
+        <activity android:name=".activitys.PlaceActivity" />
+        <activity android:name=".activitys.StatisticsActivity"></activity>
     </application>
 
 </manifest>

@@ -10,6 +10,7 @@ public class Data {
     private String name;
     private String url;
     private String PlaceId;
+    private String address;
     private Bitmap bitmap ;
 
     public Bitmap getBitmap() {
@@ -45,4 +46,11 @@ public class Data {
         PlaceId = placeId;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 }

@@ -56,6 +56,7 @@ public class DataParser {
             data.setName(country.get("name").toString());
             data.setPlaceId(country.get("id").toString());
             data.setUrl(country.get("icon").toString());
+            data.setAddress(country.get("vicinity").toString());
             dataList.add(data);
 
         }

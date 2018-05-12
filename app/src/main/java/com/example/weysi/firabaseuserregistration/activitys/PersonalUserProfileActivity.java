@@ -67,8 +67,7 @@ public class PersonalUserProfileActivity extends AppCompatActivity implements Vi
 
         user_id = getIntent().getStringExtra("UserId");
 
-        byteArray=getIntent().getByteArrayExtra("profile_photo");
-        if(byteArray!=null)
+        byteArray = getIntent().getByteArrayExtra("profile_photo");
         bmp=BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         mRootRef = FirebaseDatabase.getInstance().getReference();
 

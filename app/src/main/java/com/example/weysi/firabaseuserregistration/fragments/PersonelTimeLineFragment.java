@@ -2,6 +2,7 @@ package com.example.weysi.firabaseuserregistration.fragments;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -16,16 +17,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.weysi.firabaseuserregistration.R;
+import com.example.weysi.firabaseuserregistration.activitys.PlaceActivity;
 import com.example.weysi.firabaseuserregistration.informations.GetTimeAgo;
-import com.example.weysi.firabaseuserregistration.informations.PlaceInformation;
 import com.example.weysi.firabaseuserregistration.informations.TimeLineCheckInInformation;
-import com.example.weysi.firabaseuserregistration.informations.UserInformation;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+import com.google.android.gms.location.places.Place;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,13 +33,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PersonelTimeLineFragment extends Fragment {
+public class PersonelTimeLineFragment extends Fragment implements View.OnClickListener {
 
     private RecyclerView recyclerViewCheckIns;
     RecyclerView.Adapter adapter;
     private DatabaseReference databaseCheckIns;
-    private DatabaseReference databaseUser;
-    private List<PlaceInformation> list;
     private View mMainView;
     private String targetUserId;
 
@@ -54,14 +50,12 @@ public class PersonelTimeLineFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mMainView = inflater.inflate(R.layout.fragment_personel_time_line, container, false);
-        list = new ArrayList<>();
         recyclerViewCheckIns = (RecyclerView) mMainView.findViewById(R.id.recyclerViewCheckInst);
 
         targetUserId = getArguments().getString("targetUserId");
 
         databaseCheckIns = FirebaseDatabase.getInstance().getReference().child("UsersCheckIns").child(targetUserId);
         databaseCheckIns.keepSynced(true);
-        databaseUser=FirebaseDatabase.getInstance().getReference("Users");
 
         recyclerViewCheckIns.setHasFixedSize(true);
 
@@ -76,27 +70,24 @@ public class PersonelTimeLineFragment extends Fragment {
             @Override
             protected void populateViewHolder(final TimeLineViewHolder viewHolder, final TimeLineCheckInInformation model, int position) {
 
-                final String time = (String) (GetTimeAgo.getTimeAgo(model.getCheckInTime() * (-1), getContext()));
+                String time = (String) (GetTimeAgo.getTimeAgo(model.getCheckInTime() * (-1), getContext()));
+                byte[] encodeByte = Base64.decode(model.getUserPhoto(), Base64.DEFAULT);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
 
-                databaseUser.addListenerForSingleValueEvent(new ValueEventListener() {
+                viewHolder.setCircleImageViewUserPhoto(bitmap);
+                viewHolder.setEditTextPlace(model.getPlaceName());
+                viewHolder.setTextViewTime(time);
+                viewHolder.setTextViewUserName(model.getUserName());
+                viewHolder.setTextViewUserMessage(model.getMessage());
+                viewHolder.editTextPlace.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        UserInformation ui = dataSnapshot.child(model.getUserId()).getValue(UserInformation.class);
-                        byte[] encodeByte = Base64.decode(ui.getImage(), Base64.DEFAULT);
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-
-                        viewHolder.setCircleImageViewUserPhoto(bitmap);
-                        viewHolder.setEditTextPlace(model.getPlaceName());
-                        viewHolder.setTextViewTime(time);
-                        viewHolder.setTextViewUserName(model.getUserName());
-                        viewHolder.setTextViewUserMessage(model.getMessage());
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getContext(), PlaceActivity.class);
+                        intent.putExtra("placeID",model.getPlaceID());
+                        startActivity(intent);
                     }
                 });
+
 
             }
         };
@@ -111,6 +102,11 @@ public class PersonelTimeLineFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+
+    }
+
+    @Override
+    public void onClick(View v) {
 
     }
 
@@ -140,6 +136,7 @@ public class PersonelTimeLineFragment extends Fragment {
         public void setEditTextPlace(String place) {
             editTextPlace.setText(place);
             editTextPlace.setClickable(true);
+
         }
 
         public void setTextViewTime(String time) {
@@ -159,5 +156,6 @@ public class PersonelTimeLineFragment extends Fragment {
         }
 
     }
+
 
 }

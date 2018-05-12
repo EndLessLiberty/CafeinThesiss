@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -21,12 +22,12 @@ import android.widget.ListView;
 
 import com.example.weysi.firabaseuserregistration.informations.CheckInInformation;
 import com.example.weysi.firabaseuserregistration.informations.Data;
-import com.example.weysi.firabaseuserregistration.informations.InPlaceCheckInInformation;
 import com.example.weysi.firabaseuserregistration.informations.PlaceInformation;
 import com.example.weysi.firabaseuserregistration.informations.TimeLineCheckInInformation;
 import com.example.weysi.firabaseuserregistration.informations.UserInformation;
 import com.example.weysi.firabaseuserregistration.parsers.PlaceClass;
 import com.example.weysi.firabaseuserregistration.R;
+import com.google.android.gms.location.places.Place;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -79,10 +80,8 @@ public class NearbyPlaceActivity extends AppCompatActivity {
         mMessage=(EditText)findViewById(R.id.edit_text_checkin_message);
 
         byteArray=getIntent().getByteArrayExtra("profile_photo");
-        if(byteArray!=null)
+        //bmp= BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         sUserPhoto= Base64.encodeToString(byteArray, Base64.DEFAULT);
-
-
         lv = (ListView) findViewById(R.id.listView1);
 
         lv.setClickable(true);
@@ -107,28 +106,14 @@ public class NearbyPlaceActivity extends AppCompatActivity {
                                 databaseReferenceUser.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
-                                        UserInformation userInformation= dataSnapshot.child(firebaseAuth.getCurrentUser().getUid()).getValue(UserInformation.class);
+                                        final UserInformation userInformation= dataSnapshot.child(firebaseAuth.getCurrentUser().getUid()).getValue(UserInformation.class);
                                         final TimeLineCheckInInformation[] temptlcii = new TimeLineCheckInInformation[1];
-                                        final HashMap<String,Object> inPlaceCheckInInfo=new HashMap<>();
-                                        inPlaceCheckInInfo.put("cinsiyet",userInformation.getCinsiyet());
-                                        inPlaceCheckInInfo.put("name",userInformation.getName());
-                                        inPlaceCheckInInfo.put("userID",userInformation.getUserID());
-                                        inPlaceCheckInInfo.put("checkInTime",ServerValue.TIMESTAMP);
-                                        databaseReferencePlaceID.child(data.getPlaceId()).child(firebaseAuth.getCurrentUser().getUid()).setValue(inPlaceCheckInInfo);
-                                        databaseReferencePlaceID.child(data.getPlaceId()).child(firebaseAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                                InPlaceCheckInInformation ipcii=(InPlaceCheckInInformation)dataSnapshot.getValue(InPlaceCheckInInformation.class);
-                                                ipcii.setCheckInTime(ipcii.getCheckInTime()*(-1));
-                                                databaseReferencePlaceID.child(data.getPlaceId()).child(firebaseAuth.getCurrentUser().getUid()).setValue(ipcii);
+                                        final HashMap<String,Object> placeCheckInInfo = new HashMap<>();
+                                        placeCheckInInfo.put("userID",userInformation.getUserID());
+                                        placeCheckInInfo.put("userName",userInformation.getName());
+                                        placeCheckInInfo.put("cinsiyet",userInformation.getCinsiyet());
 
-                                            }
 
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
-
-                                            }
-                                        });
                                         final HashMap<String,Object> checkInInfo=new HashMap<>();
                                         final String id=databaseCheckIn.push().getKey();
                                         checkInInfo.put("placeID",data.getPlaceId());
@@ -145,9 +130,45 @@ public class NearbyPlaceActivity extends AppCompatActivity {
                                             public void onDataChange(DataSnapshot dataSnapshot) {
                                                 temptlcii[0]= dataSnapshot.getValue(TimeLineCheckInInformation.class);
                                                 temptlcii[0].setCheckInTime((temptlcii[0].getCheckInTime()*(-1)));
+                                                placeCheckInInfo.put("checkInTime",(temptlcii[0].getCheckInTime()));
+                                                databaseReferencePlaceID.child(data.getPlaceId()).child(firebaseAuth.getCurrentUser().getUid()).setValue(placeCheckInInfo);
                                                 databaseCheckIn.child(id).setValue(temptlcii[0]);
-                                                PlaceInformation placeInformation=new PlaceInformation(data.getName(),data.getPlaceId());
-                                                databaseReferencePlace.child(data.getPlaceId()).setValue(placeInformation);
+                                                databaseReferencePlace.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                                        if(dataSnapshot.hasChild(data.getPlaceId())){
+                                                            PlaceInformation placeInformation = dataSnapshot.child(data.getPlaceId()).getValue(PlaceInformation.class);
+                                                            if(userInformation.getCinsiyet().compareTo("Erkek")==0)
+                                                            {
+                                                                placeInformation.setMaleCount((placeInformation.getMaleCount())+1);
+                                                                databaseReferencePlace.child(data.getPlaceId()).setValue(placeInformation);
+
+                                                            }else{
+                                                                placeInformation.setFemaleCount((placeInformation.getFemaleCount())+1);
+                                                                databaseReferencePlace.child(data.getPlaceId()).setValue(placeInformation);
+                                                            }
+
+                                                        }else{
+
+                                                            if(userInformation.getCinsiyet().compareTo("Erkek")==0)
+                                                            {
+                                                                PlaceInformation placeInformation = new PlaceInformation(data.getName(),data.getPlaceId(),1,0,data.getAddress());
+                                                                databaseReferencePlace.child(data.getPlaceId()).setValue(placeInformation);
+                                                            }else{
+                                                                PlaceInformation placeInformation = new PlaceInformation(data.getName(),data.getPlaceId(),0,1,data.getAddress());
+                                                                databaseReferencePlace.child(data.getPlaceId()).setValue(placeInformation);
+                                                            }
+
+
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(DatabaseError databaseError) {
+
+                                                    }
+                                                });
+
                                                 databaseReferenceUsersID.child(firebaseAuth.getCurrentUser().getUid()).child(id).setValue(temptlcii[0]);
 
                                             }
