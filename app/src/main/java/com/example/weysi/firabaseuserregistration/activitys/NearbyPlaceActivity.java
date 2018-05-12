@@ -2,6 +2,7 @@ package com.example.weysi.firabaseuserregistration.activitys;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -63,6 +64,7 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
     private String sUserPhoto;
     private Bitmap bmp;
     private ImageButton imageButtonBack;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +86,7 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
         mMessage=(EditText)findViewById(R.id.edit_text_checkin_message);
         imageButtonBack = (ImageButton) findViewById(R.id.imageButtonBack);
         imageButtonBack.setOnClickListener(this);
+        context=this;
 
         byteArray=getIntent().getByteArrayExtra("profile_photo");
         //bmp= BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
@@ -108,6 +111,10 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
                         .setPositiveButton("Check'in", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                final ProgressDialog progressDialog = new ProgressDialog(context);
+                                progressDialog.setTitle(data.getName());
+                                progressDialog.setMessage("Check-in işleminiz gerçekleştiriliyor...");
+                                progressDialog.show();
                                 message=editTextMessage.getText().toString();
                                 databaseReferenceUser.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
@@ -170,6 +177,21 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
 
 
                                                         }
+                                                        progressDialog.dismiss();
+                                                        final AlertDialog.Builder builder2= new AlertDialog.Builder(NearbyPlaceActivity.this);
+                                                        View view3 =(LayoutInflater.from(NearbyPlaceActivity.this)).inflate(R.layout.single_completed_layout,null);
+                                                        builder2.setView(view3);
+                                                        builder2.setCancelable(false);
+                                                        builder2.setTitle(data.getName());
+                                                        builder2.setPositiveButton("Tamam",new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                dialog.dismiss();
+                                                            }
+                                                        });
+                                                        Dialog dialog2=builder2.create();
+                                                        dialog2.show();
+
                                                     }
 
                                                     @Override
@@ -197,7 +219,6 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
 
                                     }
                                 });
-
                             }
                         });
 

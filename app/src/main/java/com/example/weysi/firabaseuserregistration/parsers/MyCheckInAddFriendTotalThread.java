@@ -33,8 +33,7 @@ public class MyCheckInAddFriendTotalThread extends Thread  {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    UserInformation user=postSnapshot.getValue(UserInformation.class);
-                    mtoplamTimeLineCheckInTargetID= FirebaseDatabase.getInstance().getReference("toplamTimeLineCheckIn").child(user.getUserID());
+                    mtoplamTimeLineCheckInTargetID= FirebaseDatabase.getInstance().getReference("toplamTimeLineCheckIn").child(postSnapshot.getKey());
                     mtoplamTimeLineCheckInTargetID.child(id).setValue(veri);
                 }
             }
