@@ -42,16 +42,18 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/iptal"
+    <ImageButton
+        android:id="@+id/imageButtonBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+
+
         android:layout_marginTop="16dp"
-        android:text="İptal"
-        android:textColor="@color/acik_zemin_renk"
-        android:textSize="18sp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:background="@drawable/dugme_zemin"
+        android:src="@drawable/left_arrow"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
     <TextView
         android:id="@+id/kaydet"

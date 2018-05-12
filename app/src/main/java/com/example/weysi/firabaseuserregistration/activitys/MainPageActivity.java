@@ -38,7 +38,7 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
 
     //view objects
 
-    private Button buttonLogout;
+    private ImageButton buttonLogout;
     private ImageButton buttonGetPlace;
     private ImageButton buttonZamanTuneli;
     private ImageButton buttonMessages;
@@ -78,7 +78,7 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
 
         //initializing views
 
-        buttonLogout = (Button) findViewById(R.id.buttonLogout);
+        buttonLogout = (ImageButton) findViewById(R.id.imageButtonLogOut);
         buttonGetPlace = (ImageButton) findViewById(R.id.imageButtonGetNearbyPlaces);
         buttonZamanTuneli = (ImageButton) findViewById(R.id.imageButtonTimeLine);
         buttonMessages= (ImageButton) findViewById(R.id.imageButtonMessages);

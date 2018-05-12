@@ -55,6 +55,7 @@ public class AnotherUserProfileActivity extends AppCompatActivity implements Vie
     private ImageButton mAddedFriend;
     private ImageButton mBlockedFriend;
     private ImageButton mSendMessage;
+    private ImageButton imageButtonBack;
 
     private ViewPager mViewPager;
 
@@ -115,6 +116,8 @@ public class AnotherUserProfileActivity extends AppCompatActivity implements Vie
         mTabLayout = (TabLayout) findViewById(R.id.main_tabs);
         mViewPager = (ViewPager) findViewById(R.id.main_tabPager);
         mTabLayout = (TabLayout) findViewById(R.id.main_tabs);
+        imageButtonBack = (ImageButton)findViewById(R.id.imageButtonBack);
+        imageButtonBack.setOnClickListener(this);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(),user_id);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
@@ -675,7 +678,9 @@ public class AnotherUserProfileActivity extends AppCompatActivity implements Vie
             intent.putExtra("user_name",mProfileName.getText().toString());
             startActivity(intent);
         }
-
+    if(v == imageButtonBack){
+            finish();
+    }
 
     }
 

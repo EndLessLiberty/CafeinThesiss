@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,7 +45,7 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
     //buttons
     private TextView kaydet;
     private TextView fotoDegistir;
-    private TextView iptal;
+    private ImageButton imageButtonBack;
     private EditText adSoyadDuzenle;
     private EditText kullaniciAdiDuzenle;
     private EditText emailDuzenle;
@@ -84,7 +85,7 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
 
         fotoDegistir =(TextView) findViewById(R.id.fotoDegistir);
         kaydet =(TextView) findViewById(R.id.kaydet);
-        iptal = (TextView) findViewById(R.id.iptal);
+        imageButtonBack = (ImageButton) findViewById(R.id.imageButtonBack);
         adSoyadDuzenle = (EditText)findViewById(R.id.adSoyadDuzenle);
         kullaniciAdiDuzenle = (EditText)findViewById(R.id.kullaniciAdiDuzenle);
         kullaniciAdiDuzenle.setKeyListener(null);
@@ -103,7 +104,7 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
         fotoDegistir.setOnClickListener(this);
         circleImageViewPicture.setOnClickListener(this);
         kaydet.setOnClickListener(this);
-        iptal.setOnClickListener(this);
+        imageButtonBack.setOnClickListener(this);
 
 
         mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(firebaseUser.getUid());
@@ -157,7 +158,7 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
         }else if(view==kaydet){
             kaydetIslemi();
 
-        }else if (view==iptal){
+        }else if (view==imageButtonBack){
             finish();
         }
 

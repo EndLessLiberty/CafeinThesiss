@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.EventLogTags;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,7 +53,7 @@ public class PlaceActivity extends AppCompatActivity implements View.OnClickList
     private int femaleCount;
     private int sumCount;
     private String sumString;
-    private  TextView geriTextView;
+    private ImageButton imageButtonBack;
     private TextView mekanAdiTextView;
     private  TextView mekanAdresiTextView;
     private  TextView birSaatlikSayacTextView;
@@ -64,7 +65,8 @@ public class PlaceActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place);
-        geriTextView = (TextView)findViewById(R.id.geriTextView);
+        imageButtonBack = (ImageButton) findViewById(R.id.imageButtonBack);
+        imageButtonBack.setOnClickListener(this);
         mekanAdiTextView = (TextView)findViewById(R.id.mekanAdiTextView);
         mekanAdresiTextView = (TextView)findViewById(R.id.mekanAdresiTextView);
         birSaatlikSayacTextView = (TextView)findViewById(R.id.birSaatlikSayac);
@@ -186,7 +188,7 @@ public class PlaceActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        if(v == geriTextView){
+        if(v == imageButtonBack){
             finish();
         }
     }

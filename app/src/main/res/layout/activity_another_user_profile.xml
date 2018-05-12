@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,35 +8,47 @@
     tools:layout_editor_absoluteY="25dp">
 
     <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@color/colorPrimary"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme"
-            app:layout_constraintBottom_toTopOf="@+id/guideline3"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toTopOf="@+id/guideline3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <ImageButton
+        android:id="@+id/imageButtonBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/colorPrimary"
+        android:src="@drawable/left_arrow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/settings_image"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:src="@drawable/default_avatar"
-            app:layout_constraintBottom_toTopOf="@+id/guideline12"
-            app:layout_constraintEnd_toStartOf="@+id/guideline10"
-            app:layout_constraintHorizontal_bias="0.52"
-            app:layout_constraintStart_toStartOf="@+id/guideline9"
-            app:layout_constraintTop_toTopOf="@+id/guideline11" />
+        android:id="@+id/settings_image"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:src="@drawable/default_avatar"
+        app:layout_constraintBottom_toTopOf="@+id/guideline12"
+        app:layout_constraintEnd_toStartOf="@+id/guideline10"
+        app:layout_constraintHorizontal_bias="0.52"
+        app:layout_constraintStart_toStartOf="@+id/guideline9"
+        app:layout_constraintTop_toTopOf="@+id/guideline11" />
 
     <TextView
         android:id="@+id/textViewUserName"
@@ -73,47 +84,17 @@
         app:layout_constraintTop_toBottomOf="@+id/textViewUserName" />
 
     <ImageButton
-            android:id="@+id/imageButtonSetName"
-            android:layout_width="47dp"
-            android:layout_height="29dp"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/my_button_bg"
-            android:scaleType="fitCenter"
-            app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.846"
-            app:layout_constraintStart_toEndOf="@+id/textViewUserName"
-            app:layout_constraintTop_toTopOf="@+id/guideline12"
-            app:layout_constraintVertical_bias="0.343"
-            app:srcCompat="@drawable/settings" />
-
-        <ImageButton
-            android:id="@+id/imageButtonSetDurum"
-            android:layout_width="47dp"
-            android:layout_height="29dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/my_button_bg"
-            android:scaleType="fitCenter"
-            app:layout_constraintBottom_toTopOf="@+id/guideline3"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.87"
-            app:layout_constraintStart_toEndOf="@+id/textViewDurum"
-            app:layout_constraintTop_toBottomOf="@+id/imageButtonSetName"
-            app:srcCompat="@drawable/settings" />
-
-        <ImageButton
-            android:id="@+id/imageButtonSendMessage"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/button_background"
-            android:scaleType="fitCenter"
-            app:layout_constraintBottom_toTopOf="@+id/guideline6"
-            app:layout_constraintEnd_toStartOf="@+id/imageButtonRezerve"
-            app:layout_constraintStart_toEndOf="@+id/imageButtonAddFriend"
-            app:layout_constraintTop_toTopOf="@+id/guideline3"
-            app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/sendmessaage" />
+        android:id="@+id/imageButtonSendMessage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/button_background"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@+id/guideline6"
+        app:layout_constraintEnd_toStartOf="@+id/imageButtonRezerve"
+        app:layout_constraintStart_toEndOf="@+id/imageButtonAddFriend"
+        app:layout_constraintTop_toTopOf="@+id/guideline3"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/sendmessaage" />
 
     <ImageButton
         android:id="@+id/imageButtonBlockedSendMessage"
@@ -130,161 +111,161 @@
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/banned_sendmessaage" />
 
-        <ImageButton
-            android:id="@+id/imageButtonAddFriend"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/button_background"
-            android:scaleType="fitCenter"
-            app:layout_constraintBottom_toTopOf="@+id/guideline6"
-            app:layout_constraintEnd_toStartOf="@+id/imageButtonSendMessage"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline3"
-            app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/addfriends" />
-
-        <ImageButton
-            android:id="@+id/imageButtonAddedFriend"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/button_background"
-            android:scaleType="fitCenter"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toTopOf="@+id/guideline6"
-            app:layout_constraintEnd_toStartOf="@+id/imageButtonSendMessage"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline3"
-            app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/added_friend" />
-
-        <ImageButton
-            android:id="@+id/imageButtonRezerve"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/button_background"
-            android:scaleType="fitCenter"
-            app:layout_constraintBottom_toTopOf="@+id/guideline6"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/imageButtonSendMessage"
-            app:layout_constraintTop_toTopOf="@+id/guideline3"
-            app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/cast_ic_expanded_controller_closed_caption" />
-
-        <android.support.constraint.Guideline
-            android:id="@+id/guideline6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.78" />
-
-        <android.support.constraint.Guideline
-            android:id="@+id/guideline9"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.2" />
-
-        <android.support.constraint.Guideline
-            android:id="@+id/guideline10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.8" />
-
-        <android.support.constraint.Guideline
-            android:id="@+id/guideline11"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.2" />
-
-        <android.support.constraint.Guideline
-            android:id="@+id/guideline12"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.54" />
-
-        <android.support.constraint.Guideline
-            android:id="@+id/guideline3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.7" />
+    <ImageButton
+        android:id="@+id/imageButtonAddFriend"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/button_background"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@+id/guideline6"
+        app:layout_constraintEnd_toStartOf="@+id/imageButtonSendMessage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline3"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/addfriends" />
 
     <ImageButton
-            android:id="@+id/imageButtonBlockedFriend"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/button_background"
-            android:scaleType="fitCenter"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toTopOf="@+id/guideline6"
-            app:layout_constraintEnd_toStartOf="@+id/imageButtonSendMessage"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline3"
-            app:layout_constraintVertical_bias="1.0"
-            app:srcCompat="@drawable/banned_addfriend" />
+        android:id="@+id/imageButtonAddedFriend"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/button_background"
+        android:scaleType="fitCenter"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/guideline6"
+        app:layout_constraintEnd_toStartOf="@+id/imageButtonSendMessage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline3"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/added_friend" />
 
-        <android.support.constraint.Guideline
-            android:id="@+id/guideline13"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.85" />
+    <ImageButton
+        android:id="@+id/imageButtonRezerve"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/button_background"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@+id/guideline6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/imageButtonSendMessage"
+        app:layout_constraintTop_toTopOf="@+id/guideline3"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/cast_ic_expanded_controller_closed_caption" />
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/main_tabPager"
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.60" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.2" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.37" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.52" />
+
+    <ImageButton
+        android:id="@+id/imageButtonBlockedFriend"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/button_background"
+        android:scaleType="fitCenter"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/guideline6"
+        app:layout_constraintEnd_toStartOf="@+id/imageButtonSendMessage"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline3"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/banned_addfriend" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.68" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/main_tabPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/acik_zemin_renk"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline13"
+        app:layout_constraintVertical_bias="0.0">
+
+    </android.support.v4.view.ViewPager>
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/main_tabs"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline13"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline6"
+        app:layout_constraintVertical_bias="0.0">
+
+        <android.support.design.widget.TabItem
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Zaman Tüneli" />
+
+        <android.support.design.widget.TabItem
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/acik_zemin_renk"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline13"
-            app:layout_constraintVertical_bias="0.0">
-
-        </android.support.v4.view.ViewPager>
-
-        <android.support.design.widget.TabLayout
-            android:id="@+id/main_tabs"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/guideline13"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline6"
-            app:layout_constraintVertical_bias="0.0">
-
-            <android.support.design.widget.TabItem
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Zaman Tüneli" />
-
-            <android.support.design.widget.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Arkadaşlar" />
-        </android.support.design.widget.TabLayout>
+            android:text="Arkadaşlar" />
+    </android.support.design.widget.TabLayout>
 
     <ImageButton
-    android:id="@+id/imageButtonCancelAddFriend"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    android:background="@drawable/button_background"
-    android:scaleType="fitCenter"
-    android:visibility="invisible"
-    app:layout_constraintBottom_toTopOf="@+id/guideline6"
-    app:layout_constraintEnd_toStartOf="@+id/imageButtonSendMessage"
-    app:layout_constraintHorizontal_bias="1.0"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="@+id/guideline3"
-    app:layout_constraintVertical_bias="1.0"
-    app:srcCompat="@drawable/cancel_addfriends" />
+        android:id="@+id/imageButtonCancelAddFriend"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/button_background"
+        android:scaleType="fitCenter"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/guideline6"
+        app:layout_constraintEnd_toStartOf="@+id/imageButtonSendMessage"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline3"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/cancel_addfriends" />
 
     <ImageButton
         android:id="@+id/imageButtonAcceptAddFriend"

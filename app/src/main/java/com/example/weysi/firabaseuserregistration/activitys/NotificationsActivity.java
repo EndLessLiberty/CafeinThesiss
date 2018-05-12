@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.weysi.firabaseuserregistration.R;
@@ -38,7 +39,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by Enes on 25.04.2018.
  */
 
-public class NotificationsActivity extends AppCompatActivity {
+public class NotificationsActivity extends AppCompatActivity implements View.OnClickListener {
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
     private DatabaseReference mRootRef;
@@ -50,6 +51,7 @@ public class NotificationsActivity extends AppCompatActivity {
     private String notificatinId;
     private GetTimeAgo getTimeAgo;
     private Context context;
+    private ImageButton imageButtonBack;
 
 
 
@@ -73,6 +75,8 @@ public class NotificationsActivity extends AppCompatActivity {
         mNotificationList=(RecyclerView)findViewById(R.id.notification_list);
         mNotificationList.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         context=this;
+        imageButtonBack = (ImageButton)findViewById(R.id.imageButtonBack);
+        imageButtonBack.setOnClickListener(this);
 
         FirebaseRecyclerAdapter<NotificationInformation,NotificationViewHolder> notificationsRecylerViewAdapter=new FirebaseRecyclerAdapter<NotificationInformation, NotificationViewHolder>(
                 NotificationInformation.class,
@@ -308,6 +312,13 @@ public class NotificationsActivity extends AppCompatActivity {
         super.onStart();
 
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v == imageButtonBack){
+            finish();
+        }
     }
 
     public static class NotificationViewHolder extends RecyclerView.ViewHolder {

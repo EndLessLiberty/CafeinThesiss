@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -36,12 +37,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 
 
-public class TimeLineActivity extends AppCompatActivity {
+public class TimeLineActivity extends AppCompatActivity implements View.OnClickListener{
 
     private ListView mTimeLineListView;
 
     private DatabaseReference mUserFriendsDatabase;
     private DatabaseReference mCheckInsDatabase;
+    private ImageButton imageButtonBack;
 
 
     private String mCurrentUserId;
@@ -67,6 +69,8 @@ public class TimeLineActivity extends AppCompatActivity {
 
         mTimeLineListView=(ListView)findViewById(R.id.listViewCheckIns) ;
         mTimeLineListView.setClickable(true);
+        imageButtonBack = (ImageButton)findViewById(R.id.imageButtonBack);
+        imageButtonBack.setOnClickListener(this);
 
         timeLineCheckInInformationList=new ArrayList<TimeLineCheckInInformation>();
         getTimeAgo=new GetTimeAgo();
@@ -147,4 +151,10 @@ public class TimeLineActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onClick(View v) {
+        if(v == imageButtonBack){
+            finish();
+        }
+    }
 }

@@ -18,7 +18,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.weysi.firabaseuserregistration.informations.CheckInInformation;
 import com.example.weysi.firabaseuserregistration.informations.Data;
@@ -39,7 +41,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.List;
 
-public class NearbyPlaceActivity extends AppCompatActivity {
+public class NearbyPlaceActivity extends AppCompatActivity implements View.OnClickListener{
 
     private LocationManager konumYoneticisi;
     private FirebaseAuth firebaseAuth;
@@ -59,6 +61,7 @@ public class NearbyPlaceActivity extends AppCompatActivity {
     private byte [] byteArray;
     private String sUserPhoto;
     private Bitmap bmp;
+    private ImageButton imageButtonBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +81,8 @@ public class NearbyPlaceActivity extends AppCompatActivity {
         konumYoneticisi = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         mMessage=(EditText)findViewById(R.id.edit_text_checkin_message);
+        imageButtonBack = (ImageButton) findViewById(R.id.imageButtonBack);
+        imageButtonBack.setOnClickListener(this);
 
         byteArray=getIntent().getByteArrayExtra("profile_photo");
         //bmp= BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
@@ -256,4 +261,10 @@ public class NearbyPlaceActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onClick(View v) {
+        if(v == imageButtonBack){
+            finish();
+        }
+    }
 }

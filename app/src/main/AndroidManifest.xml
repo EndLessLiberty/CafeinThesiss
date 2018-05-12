@@ -15,7 +15,8 @@
         android:roundIcon="@mipmap/cafein"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activitys.SignUpActivity">
+        <activity android:name=".activitys.SignUpActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,25 +30,40 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".activitys.LoginActivity" />
-        <activity android:name=".activitys.MainPageActivity" />
-        <activity android:name=".activitys.InPlaceCheckInActivity" />
-        <activity android:name=".activitys.NearbyPlaceActivity" />
-        <activity android:name=".activitys.ProfileSettingsActivity" />
-        <activity android:name=".activitys.TimeLineActivity" />
-        <activity android:name=".activitys.AnotherUserProfileActivity" />
-        <activity android:name=".activitys.ChatActivity" />
-        <activity android:name=".activitys.MessageActivity" />
-        <activity android:name=".activitys.PersonalUserProfileActivity" />
-        <activity android:name=".activitys.NotificationsActivity">
+        <activity android:name=".activitys.LoginActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activitys.MainPageActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activitys.InPlaceCheckInActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activitys.NearbyPlaceActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activitys.ProfileSettingsActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activitys.TimeLineActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activitys.AnotherUserProfileActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activitys.ChatActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activitys.MessageActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activitys.PersonalUserProfileActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activitys.NotificationsActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="incom.example.weysi.firabaseuserregistration.activitys_TARGET_NOTIFICATION" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".activitys.PlaceActivity" />
-        <activity android:name=".activitys.StatisticsActivity"></activity>
+        <activity android:name=".activitys.PlaceActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activitys.StatisticsActivity"
+            android:screenOrientation="portrait">
+
+        </activity>
     </application>
 
 </manifest>

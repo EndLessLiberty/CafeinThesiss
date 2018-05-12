@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.example.weysi.firabaseuserregistration.R;
@@ -45,6 +46,7 @@ public class PersonalUserProfileActivity extends AppCompatActivity implements Vi
     private DatabaseReference mNotificationDatabase;
     private StorageReference mStorage;
     private TabLayout mTabLayout;
+    private ImageButton imageButtonBack;
     private TextView mProfileDuzenle;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private static FragmentManager fragmentManager;
@@ -81,6 +83,8 @@ public class PersonalUserProfileActivity extends AppCompatActivity implements Vi
         mProfileImage = (CircleImageView) findViewById(R.id.settings_image);
         mProfileName = (TextView) findViewById(R.id.textViewUserName);
         mProfileStatus = (TextView) findViewById(R.id.textViewDurum);
+        imageButtonBack = (ImageButton)findViewById(R.id.imageButtonBack);
+        imageButtonBack.setOnClickListener(this);
         mProfileDuzenle=(TextView) findViewById(R.id.textViewProfiliDuzenle);
         mTabLayout = (TabLayout) findViewById(R.id.personal_tabs);
         mViewPager = (ViewPager) findViewById(R.id.personalViewPager);
@@ -141,6 +145,8 @@ public class PersonalUserProfileActivity extends AppCompatActivity implements Vi
             Intent intent = new Intent(getApplicationContext(), ProfileSettingsActivity.class);
             intent.putExtra("profile_photo",byteArray);
             startActivity(intent);
+        }else if(v == imageButtonBack){
+            finish();
         }
     }
 }
