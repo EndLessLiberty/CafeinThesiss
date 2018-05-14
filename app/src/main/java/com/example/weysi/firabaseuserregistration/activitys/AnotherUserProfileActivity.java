@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.example.weysi.firabaseuserregistration.R;
 import com.example.weysi.firabaseuserregistration.adapters.SectionsPagerAdapter;
 import com.example.weysi.firabaseuserregistration.informations.NotificationInformation;
+import com.example.weysi.firabaseuserregistration.parsers.ArkadasCikarCheckInSilThread;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -635,6 +636,9 @@ public class AnotherUserProfileActivity extends AppCompatActivity implements Vie
                         Map unfriendMap = new HashMap();
                         unfriendMap.put("Friends/" + mCurrent_user.getUid() + "/" + user_id, null);
                         unfriendMap.put("Friends/" + user_id + "/" + mCurrent_user.getUid(), null);
+
+                        ArkadasCikarCheckInSilThread arkadasCikarCheckInSilThread=new ArkadasCikarCheckInSilThread(user_id,mCurrent_user.getUid());
+                        arkadasCikarCheckInSilThread.start();
 
                         mRootRef.updateChildren(unfriendMap, new DatabaseReference.CompletionListener() {
                             @Override

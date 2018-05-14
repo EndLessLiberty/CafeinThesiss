@@ -73,14 +73,6 @@ public class FriendsFragment extends Fragment {
 
         mFriendsList.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Inflate the layout for this fragment
-        return mMainView;
-    }
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
         FirebaseRecyclerAdapter<Friends, FriendsViewHolder> friendsRecyclerViewAdapter = new FirebaseRecyclerAdapter<Friends, FriendsViewHolder>(
 
                 Friends.class,
@@ -176,6 +168,16 @@ public class FriendsFragment extends Fragment {
         };
 
         mFriendsList.setAdapter(friendsRecyclerViewAdapter);
+
+        // Inflate the layout for this fragment
+        return mMainView;
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
 
 
     }
