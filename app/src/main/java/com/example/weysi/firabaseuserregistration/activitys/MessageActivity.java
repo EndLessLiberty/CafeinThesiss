@@ -4,12 +4,15 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -22,6 +25,7 @@ import com.example.weysi.firabaseuserregistration.R;
 import com.example.weysi.firabaseuserregistration.adapters.MessagePagerAdapter;
 import com.example.weysi.firabaseuserregistration.fragments.FriendsFragment;
 import com.example.weysi.firabaseuserregistration.informations.Friends;
+import com.example.weysi.firabaseuserregistration.informations.UserInformation;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -124,40 +128,43 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
 
                 }
             });
-            FirebaseRecyclerAdapter<Friends, FriendsFragment.FriendsViewHolder> friendsRecyclerViewAdapter = new FirebaseRecyclerAdapter<Friends, FriendsFragment.FriendsViewHolder>(
+            FirebaseRecyclerAdapter<UserInformation, searchResultViewHolder> friendsRecyclerViewAdapter = new FirebaseRecyclerAdapter<UserInformation, searchResultViewHolder>(
 
-                    Friends.class,
+                    UserInformation.class,
                     R.layout.users_single_layout,
-                    FriendsFragment.FriendsViewHolder.class,
+                    searchResultViewHolder.class,
                     firebaseQuery
 
 
             ) {
                 @Override
-                protected void populateViewHolder(final FriendsFragment.FriendsViewHolder friendsViewHolder, Friends friends, int i) {
+                protected void populateViewHolder(final searchResultViewHolder viewHolder, final UserInformation model, int i) {
 
-                    friendsViewHolder.setDate(friends.getDate());
-
-                    final String list_user_id = getRef(i).getKey();
-
-                    mUserDatabase2.child(list_user_id).addValueEventListener(new ValueEventListener() {
+                    mUserDatabase2.child(model.getUserID()).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-
-                            final String userName = dataSnapshot.child("name").getValue().toString();
-                            String userThumb = dataSnapshot.child("image").getValue().toString();
-
+                            Bitmap bmp;
                             if(dataSnapshot.hasChild("online")) {
                                 String userOnline = dataSnapshot.child("online").getValue().toString();
-                                friendsViewHolder.setUserOnline(userOnline);
+                                viewHolder.setUserOnline(userOnline);
                             }
-                            friendsViewHolder.setName(userName);
-                            friendsViewHolder.setUserImage(userThumb, MyApplication.getContext());
-                            friendsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                            if(model.getImage().compareTo("default")==0)
+                            {
+                                bmp= BitmapFactory.decodeResource(getResources(), R.drawable.default_avatar);
+
+                            }
+                            else
+                            {
+                                byte []byteArray = Base64.decode(model.getImage(), Base64.DEFAULT);
+                                bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                            }
+                            viewHolder.setName(model.getName());
+                            viewHolder.setUserImage(bmp);
+                            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     Intent profileIntent = new Intent(MyApplication.getContext(), AnotherUserProfileActivity.class);
-                                    profileIntent.putExtra("UserID", list_user_id);
+                                    profileIntent.putExtra("UserID", model.getUserID());
                                     startActivity(profileIntent);
                                 }
                             });
@@ -182,11 +189,11 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    public static class FriendsViewHolder extends RecyclerView.ViewHolder {
+    public static class searchResultViewHolder extends RecyclerView.ViewHolder {
 
         View mView;
 
-        public FriendsViewHolder(View itemView) {
+        public searchResultViewHolder(View itemView) {
             super(itemView);
 
             mView = itemView;
@@ -207,11 +214,10 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
 
         }
 
-        public void setUserImage(String thumb_image, Context ctx){
+        public void setUserImage(Bitmap bitmap){
 
             CircleImageView userImageView = (CircleImageView) mView.findViewById(R.id.user_single_image);
-            Picasso.with(ctx).load(thumb_image).placeholder(R.drawable.default_avatar).into(userImageView);
-
+            userImageView.setImageBitmap(bitmap);
         }
 
         public void setUserOnline(String online_status) {

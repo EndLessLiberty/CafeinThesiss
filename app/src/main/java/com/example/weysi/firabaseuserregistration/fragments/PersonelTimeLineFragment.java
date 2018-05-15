@@ -20,10 +20,14 @@ import com.example.weysi.firabaseuserregistration.R;
 import com.example.weysi.firabaseuserregistration.activitys.PlaceActivity;
 import com.example.weysi.firabaseuserregistration.informations.GetTimeAgo;
 import com.example.weysi.firabaseuserregistration.informations.TimeLineCheckInInformation;
+import com.example.weysi.firabaseuserregistration.informations.UserInformation;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.location.places.Place;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +42,10 @@ public class PersonelTimeLineFragment extends Fragment implements View.OnClickLi
     private RecyclerView recyclerViewCheckIns;
     RecyclerView.Adapter adapter;
     private DatabaseReference databaseCheckIns;
+    private DatabaseReference mUserDatabase;
     private View mMainView;
     private String targetUserId;
+    private Bitmap bmp;
 
     public PersonelTimeLineFragment() {
         // Required empty public constructor
@@ -56,39 +62,68 @@ public class PersonelTimeLineFragment extends Fragment implements View.OnClickLi
 
         databaseCheckIns = FirebaseDatabase.getInstance().getReference().child("UsersCheckIns").child(targetUserId);
         databaseCheckIns.keepSynced(true);
+        mUserDatabase=FirebaseDatabase.getInstance().getReference("Users");
 
-        recyclerViewCheckIns.setHasFixedSize(true);
+        mUserDatabase.child(targetUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String image=dataSnapshot.child("image").getValue().toString();
+                if(image.compareTo("default")==0)
+                {
+                    bmp= BitmapFactory.decodeResource(getResources(), R.drawable.default_avatar);
 
+                }
+                else
+                {
+                    byte []byteArray = Base64.decode(image, Base64.DEFAULT);
+                    bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         final FirebaseRecyclerAdapter<TimeLineCheckInInformation, TimeLineViewHolder> timeLineRecylerViewAdapter = new FirebaseRecyclerAdapter<TimeLineCheckInInformation, TimeLineViewHolder>(
                 TimeLineCheckInInformation.class,
                 R.layout.single_check_in_layout,
                 TimeLineViewHolder.class,
-                databaseCheckIns.orderByChild("checkInTime")
+                databaseCheckIns.orderByChild("checkInTime").limitToFirst(10)
 
         ) {
             @Override
             protected void populateViewHolder(final TimeLineViewHolder viewHolder, final TimeLineCheckInInformation model, int position) {
 
-                String time = (String) (GetTimeAgo.getTimeAgo(model.getCheckInTime() * (-1), getContext()));
-                byte[] encodeByte = Base64.decode(model.getUserPhoto(), Base64.DEFAULT);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
 
-                viewHolder.setCircleImageViewUserPhoto(bitmap);
-                viewHolder.setEditTextPlace(model.getPlaceName());
-                viewHolder.setTextViewTime(time);
-                viewHolder.setTextViewUserName(model.getUserName());
-                viewHolder.setTextViewUserMessage(model.getMessage());
-                viewHolder.editTextPlace.setOnClickListener(new View.OnClickListener() {
+                mUserDatabase.child(targetUserId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(getContext(), PlaceActivity.class);
-                        intent.putExtra("placeID",model.getPlaceID());
-                        startActivity(intent);
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        UserInformation user=dataSnapshot.getValue(UserInformation.class);
+                        String time = (String) (GetTimeAgo.getTimeAgo(model.getCheckInTime() * (-1), getContext()));
+
+                        viewHolder.setCircleImageViewUserPhoto(bmp);
+                        viewHolder.setEditTextPlace(model.getPlaceName());
+                        viewHolder.setTextViewTime(time);
+                        viewHolder.setTextViewUserName(model.getUserName());
+                        viewHolder.setTextViewUserMessage(model.getMessage());
+                        viewHolder.editTextPlace.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(getContext(), PlaceActivity.class);
+                                intent.putExtra("placeID",model.getPlaceID());
+                                startActivity(intent);
+                            }
+                        });
                     }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+
                 });
-
-
             }
         };
         recyclerViewCheckIns.setAdapter(timeLineRecylerViewAdapter);

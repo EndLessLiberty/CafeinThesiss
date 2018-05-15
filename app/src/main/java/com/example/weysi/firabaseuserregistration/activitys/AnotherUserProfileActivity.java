@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 import com.example.weysi.firabaseuserregistration.R;
 import com.example.weysi.firabaseuserregistration.adapters.SectionsPagerAdapter;
 import com.example.weysi.firabaseuserregistration.informations.NotificationInformation;
+import com.example.weysi.firabaseuserregistration.parsers.ArkadasCikarCheckInSilThread;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,6 +39,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -73,6 +76,7 @@ public class AnotherUserProfileActivity extends AppCompatActivity implements Vie
 
     private String user_id;
     private FirebaseUser mCurrent_user;
+    private byte[] bytes;
 
     private String mCurrent_state;
     private String notificatinId;
@@ -127,29 +131,25 @@ public class AnotherUserProfileActivity extends AppCompatActivity implements Vie
 
 
         final long ONE_MEGABYTE = 720 * 1024;
-        mStorage.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {                 // Data for "images/island.jpg" is returns, use this as needed
-                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                if(bmp!=null)
-                    mProfileImage.setImageBitmap(bmp);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                //  imageViewHeader.setImageResource(R.mipmap.ic_launcher_round);
-            }
-        });
 
-
-        mUsersDatabase.addValueEventListener(new ValueEventListener() {
+        mUsersDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 String display_name = dataSnapshot.child("name").getValue().toString();
                 String status = dataSnapshot.child("durum").getValue().toString();
                 String image = dataSnapshot.child("image").getValue().toString();
-
+                Bitmap bmp;
+                if(image.compareTo("default")==0)
+                {
+                    bmp=BitmapFactory.decodeResource(getResources(), R.drawable.default_avatar);
+                }
+                else
+                {
+                    bytes = Base64.decode(image, Base64.DEFAULT);
+                    bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                }
+                mProfileImage.setImageBitmap(bmp);
                 mProfileName.setText(display_name);
                 mProfileStatus.setText(status);
 
@@ -239,17 +239,17 @@ public class AnotherUserProfileActivity extends AppCompatActivity implements Vie
                                         mAcceptFriend.setClickable(false);
                                     }
 
-                                    mProgressDialog.dismiss();
 
                                 }
 
                                 @Override
                                 public void onCancelled(DatabaseError databaseError) {
 
-                                    mProgressDialog.dismiss();
 
                                 }
                             });
+
+                            mProgressDialog.dismiss();
 
                         }
 
@@ -636,6 +636,9 @@ public class AnotherUserProfileActivity extends AppCompatActivity implements Vie
                         Map unfriendMap = new HashMap();
                         unfriendMap.put("Friends/" + mCurrent_user.getUid() + "/" + user_id, null);
                         unfriendMap.put("Friends/" + user_id + "/" + mCurrent_user.getUid(), null);
+
+                        ArkadasCikarCheckInSilThread arkadasCikarCheckInSilThread=new ArkadasCikarCheckInSilThread(user_id,mCurrent_user.getUid());
+                        arkadasCikarCheckInSilThread.start();
 
                         mRootRef.updateChildren(unfriendMap, new DatabaseReference.CompletionListener() {
                             @Override

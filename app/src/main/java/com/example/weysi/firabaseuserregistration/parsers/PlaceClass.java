@@ -1,5 +1,6 @@
 package com.example.weysi.firabaseuserregistration.parsers;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -28,13 +29,15 @@ public class PlaceClass extends AsyncTask< String,String, List<Data>> {
     ListView lv;
     double x,y;
     Context context;
+    ProgressDialog pd;
 
 
-    public PlaceClass(ListView t, double x1, double y2, Context c){
+    public PlaceClass(ListView t, double x1, double y2, Context c,ProgressDialog pd){
         lv=t;
         x=x1;
         y=y2;
         context=c;
+        this.pd=pd;
 
     }
 
@@ -79,6 +82,7 @@ public class PlaceClass extends AsyncTask< String,String, List<Data>> {
     protected void onPostExecute( List<Data> result) {
 
         OzelAdapter adaptorumuz=new OzelAdapter(context, R.layout.satir_layout ,result);
+        pd.dismiss();
         lv.setAdapter(adaptorumuz);
 
 }}

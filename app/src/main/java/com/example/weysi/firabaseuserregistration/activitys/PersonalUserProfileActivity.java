@@ -10,6 +10,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -49,11 +50,11 @@ public class PersonalUserProfileActivity extends AppCompatActivity implements Vi
     private ImageButton imageButtonBack;
     private TextView mProfileDuzenle;
     private SectionsPagerAdapter mSectionsPagerAdapter;
-    private static FragmentManager fragmentManager;
+
     private Bitmap bmp;
+    private String sImage;
     private byte [] byteArray;
     private String user_id;
-    private FirebaseUser mCurrent_user;
 
 
     @Override
@@ -69,15 +70,12 @@ public class PersonalUserProfileActivity extends AppCompatActivity implements Vi
 
         user_id = getIntent().getStringExtra("UserId");
 
-        byteArray = getIntent().getByteArrayExtra("profile_photo");
-        bmp=BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         mRootRef = FirebaseDatabase.getInstance().getReference();
 
 
         mUsersDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(user_id);
         mFriendDatabase = FirebaseDatabase.getInstance().getReference().child("Friends");
         mNotificationDatabase = FirebaseDatabase.getInstance().getReference().child("notifications");
-        mCurrent_user = FirebaseAuth.getInstance().getCurrentUser();
         mStorage = FirebaseStorage.getInstance().getReference(user_id);
 
         mProfileImage = (CircleImageView) findViewById(R.id.settings_image);
@@ -92,37 +90,19 @@ public class PersonalUserProfileActivity extends AppCompatActivity implements Vi
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
 
-        if(bmp!=null)
-            mProfileImage.setImageBitmap(bmp);
-        else
-        {
-            final long ONE_MEGABYTE = 720 * 1024;
-            mStorage.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                @Override
-                public void onSuccess(byte[] bytes) {                 // Data for "images/island.jpg" is returns, use this as needed
-                    bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    if (bmp != null)
-                        mProfileImage.setImageBitmap(bmp);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    //  imageViewHeader.setImageResource(R.mipmap.ic_launcher_round);
-                }
-            });
-        }
-
-
         mUsersDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
+                sImage=dataSnapshot.child("image").getValue().toString();
+                byteArray = Base64.decode(sImage, Base64.DEFAULT);
+                bmp=BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
                 String display_name = dataSnapshot.child("name").getValue().toString();
                 String status = dataSnapshot.child("durum").getValue().toString();
-                String image = dataSnapshot.child("image").getValue().toString();
 
                 mProfileName.setText(display_name);
                 mProfileStatus.setText(status);
+                mProfileImage.setImageBitmap(bmp);
 
             }
 
@@ -131,10 +111,14 @@ public class PersonalUserProfileActivity extends AppCompatActivity implements Vi
 
             }
         });
-
-        mProgressDialog.dismiss();
-
         mProfileDuzenle.setOnClickListener(this);
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mProgressDialog.dismiss();
 
     }
 
@@ -142,11 +126,13 @@ public class PersonalUserProfileActivity extends AppCompatActivity implements Vi
     public void onClick(View v) {
         if(v==mProfileDuzenle)
         {
-            Intent intent = new Intent(getApplicationContext(), ProfileSettingsActivity.class);
-            intent.putExtra("profile_photo",byteArray);
+            Intent intent = new Intent(this, ProfileSettingsActivity.class);
+            //intent.putExtra("profile_photo",sImage);
             startActivity(intent);
+
         }else if(v == imageButtonBack){
             finish();
         }
     }
+
 }

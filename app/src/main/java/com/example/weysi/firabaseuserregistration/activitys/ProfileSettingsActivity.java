@@ -38,6 +38,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 
 public class ProfileSettingsActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -61,10 +62,11 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
     private byte [] byteArray;
     private String sUserPhoto;
 
-    private StorageReference mStorage;
+    //private StorageReference mStorage;
     private DatabaseReference mUserDatabase;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
+    private ProgressDialog pd;
 
     private UserInformation userInformation ;
 
@@ -77,11 +79,15 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
 
-        mStorage= FirebaseStorage.getInstance().getReference(firebaseUser.getUid());
+        //mStorage= FirebaseStorage.getInstance().getReference(firebaseUser.getUid());
 
         //buttonListener
         circleImageViewPicture =(de.hdodenhof.circleimageview.CircleImageView)findViewById(R.id.imageViewPicture);
 
+        pd=new ProgressDialog(this);
+        pd.setMessage("Bilgileriniz Getiriliyor...");
+        pd.setCanceledOnTouchOutside(false);
+        pd.show();
 
         fotoDegistir =(TextView) findViewById(R.id.fotoDegistir);
         kaydet =(TextView) findViewById(R.id.kaydet);
@@ -97,9 +103,7 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
         yeniSifreTekrarDuzenle = (EditText) findViewById(R.id.yeniSifreTekrarDuzenle);
         eskiSifreDuzenle = (EditText)findViewById(R.id.eskiSifreDuzenle);
 
-        byteArray=getIntent().getByteArrayExtra("profile_photo");
-        bmp=BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-        circleImageViewPicture.setImageBitmap(bmp);
+
 
         fotoDegistir.setOnClickListener(this);
         circleImageViewPicture.setOnClickListener(this);
@@ -108,9 +112,8 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
 
 
         mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(firebaseUser.getUid());
-        mUserDatabase.keepSynced(true);
 
-        mUserDatabase.addValueEventListener(new ValueEventListener() {
+        mUserDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 userInformation = dataSnapshot.getValue(UserInformation.class);
@@ -118,17 +121,22 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
                 String nickName = dataSnapshot.child("nickName").getValue().toString();
                 String phone = dataSnapshot.child("phone").getValue().toString();
                 String dogumTarihi = dataSnapshot.child("dogumTarihi").getValue().toString();
-                String cinsiyet = dataSnapshot.child("cinsiyet").getValue().toString();
+                //String cinsiyet = dataSnapshot.child("cinsiyet").getValue().toString();
                 final String image = dataSnapshot.child("image").getValue().toString();
-                String status = dataSnapshot.child("durum").getValue().toString();
-                String thumb_image = dataSnapshot.child("thumb_image").getValue().toString();
-                String device_token = dataSnapshot.child("device_token").getValue().toString();
+                //String status = dataSnapshot.child("durum").getValue().toString();
+                //String thumb_image = dataSnapshot.child("thumb_image").getValue().toString();
+                //String device_token = dataSnapshot.child("device_token").getValue().toString();
+                byteArray=Base64.decode(image, Base64.DEFAULT);
+                bmp=BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                circleImageViewPicture.setImageBitmap(bmp);
 
                 adSoyadDuzenle.setText(name);
                 kullaniciAdiDuzenle.setText(nickName);
                 emailDuzenle.setText(firebaseUser.getEmail());
                 telefonDuzenle.setText(phone);
                 dogumTarihiDuzenle.setText(dogumTarihi);
+
+                pd.dismiss();
 
             }
 
@@ -185,20 +193,9 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
                 byteArray = stream.toByteArray();
                 bitmap.recycle();
                 sUserPhoto= Base64.encodeToString(byteArray, Base64.DEFAULT);
-
-                mUserDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        userInformation=dataSnapshot.getValue(UserInformation.class);
-                        userInformation.setImage(sUserPhoto);
-                        mUserDatabase.setValue(userInformation);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
+                HashMap<String,Object> update=new HashMap<>();
+                update.put("image",sUserPhoto);
+                mUserDatabase.updateChildren(update);
 
                 //uploadFile();
 
@@ -248,10 +245,11 @@ public class ProfileSettingsActivity extends AppCompatActivity implements View.O
             //Profil Güncelleme Kısmı kontrol ediliyor.
             if(adSoyad.length()>0 && dogumTarihi.length()>0 && telefon.length()>0){
 
-                userInformation.setName(adSoyad);
-                userInformation.setDogumTarihi(dogumTarihi);
-                userInformation.setPhone(telefon);
-                mUserDatabase.setValue(userInformation);
+                HashMap<String,Object> update=new HashMap<>();
+                update.put("name",adSoyad);
+                update.put("dogumTarihi",dogumTarihi);
+                update.put("phone",telefon);
+                mUserDatabase.updateChildren(update);
                 Toast.makeText(this,"Değişiklikler başarıyla kaydedildi.",Toast.LENGTH_LONG).show();
 
             }else {

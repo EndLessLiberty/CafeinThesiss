@@ -2,6 +2,7 @@ package com.example.weysi.firabaseuserregistration.activitys;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -27,6 +28,7 @@ import com.example.weysi.firabaseuserregistration.informations.Data;
 import com.example.weysi.firabaseuserregistration.informations.PlaceInformation;
 import com.example.weysi.firabaseuserregistration.informations.TimeLineCheckInInformation;
 import com.example.weysi.firabaseuserregistration.informations.UserInformation;
+import com.example.weysi.firabaseuserregistration.parsers.MyCheckInAddFriendTotalThread;
 import com.example.weysi.firabaseuserregistration.parsers.PlaceClass;
 import com.example.weysi.firabaseuserregistration.R;
 import com.google.android.gms.location.places.Place;
@@ -56,18 +58,22 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
 
     private double x;
     private double y;
+    private ProgressDialog pd;
     private List<CheckInInformation> checkInActivityList;
     private String message;
-    private byte [] byteArray;
-    private String sUserPhoto;
-    private Bitmap bmp;
+    private String sImage;
     private ImageButton imageButtonBack;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nearby_place);
 
+        pd=new ProgressDialog(this);
+        pd.setMessage("Yakındaki Lokasyonlar Getiriliyor...");
+        pd.setCanceledOnTouchOutside(false);
+        pd.show();
         firebaseAuth = FirebaseAuth.getInstance();
         databaseReferenceUsersID=FirebaseDatabase.getInstance().getReference("UsersCheckIns");
         databaseCheckIn = FirebaseDatabase.getInstance().getReference("check");
@@ -83,10 +89,8 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
         mMessage=(EditText)findViewById(R.id.edit_text_checkin_message);
         imageButtonBack = (ImageButton) findViewById(R.id.imageButtonBack);
         imageButtonBack.setOnClickListener(this);
+        context=this;
 
-        byteArray=getIntent().getByteArrayExtra("profile_photo");
-        //bmp= BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-        sUserPhoto= Base64.encodeToString(byteArray, Base64.DEFAULT);
         lv = (ListView) findViewById(R.id.listView1);
 
         lv.setClickable(true);
@@ -107,6 +111,10 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
                         .setPositiveButton("Check'in", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                final ProgressDialog progressDialog = new ProgressDialog(context);
+                                progressDialog.setTitle(data.getName());
+                                progressDialog.setMessage("Check-in işleminiz gerçekleştiriliyor...");
+                                progressDialog.show();
                                 message=editTextMessage.getText().toString();
                                 databaseReferenceUser.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
@@ -114,6 +122,7 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
                                         final UserInformation userInformation= dataSnapshot.child(firebaseAuth.getCurrentUser().getUid()).getValue(UserInformation.class);
                                         final TimeLineCheckInInformation[] temptlcii = new TimeLineCheckInInformation[1];
                                         final HashMap<String,Object> placeCheckInInfo = new HashMap<>();
+                                        sImage=userInformation.getImage();
                                         placeCheckInInfo.put("userID",userInformation.getUserID());
                                         placeCheckInInfo.put("userName",userInformation.getName());
                                         placeCheckInInfo.put("cinsiyet",userInformation.getCinsiyet());
@@ -128,7 +137,7 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
                                         checkInInfo.put("checkInTime",ServerValue.TIMESTAMP);
                                         checkInInfo.put("message",message);
                                         checkInInfo.put("checkInID",id);
-                                        checkInInfo.put("userPhoto",sUserPhoto);
+                                        checkInInfo.put("userPhoto",sImage);
                                         databaseCheckIn.child(id).setValue(checkInInfo);
                                         databaseCheckIn.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
@@ -138,6 +147,9 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
                                                 placeCheckInInfo.put("checkInTime",(temptlcii[0].getCheckInTime()));
                                                 databaseReferencePlaceID.child(data.getPlaceId()).child(firebaseAuth.getCurrentUser().getUid()).setValue(placeCheckInInfo);
                                                 databaseCheckIn.child(id).setValue(temptlcii[0]);
+                                                MyCheckInAddFriendTotalThread myCheckInAddFriendTotalThread=new MyCheckInAddFriendTotalThread(
+                                                        firebaseAuth.getCurrentUser().getUid(),temptlcii[0],id);
+                                                myCheckInAddFriendTotalThread.start();
                                                 databaseReferencePlace.addListenerForSingleValueEvent(new ValueEventListener() {
                                                     @Override
                                                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -166,6 +178,21 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
 
 
                                                         }
+                                                        progressDialog.dismiss();
+                                                        final AlertDialog.Builder builder2= new AlertDialog.Builder(NearbyPlaceActivity.this);
+                                                        View view3 =(LayoutInflater.from(NearbyPlaceActivity.this)).inflate(R.layout.single_completed_layout,null);
+                                                        builder2.setView(view3);
+                                                        builder2.setCancelable(false);
+                                                        builder2.setTitle(data.getName());
+                                                        builder2.setPositiveButton("Tamam",new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                dialog.dismiss();
+                                                            }
+                                                        });
+                                                        Dialog dialog2=builder2.create();
+                                                        dialog2.show();
+
                                                     }
 
                                                     @Override
@@ -193,7 +220,6 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
 
                                     }
                                 });
-
                             }
                         });
 
@@ -211,7 +237,7 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
 
                 x = loc.getLatitude();
                 y = loc.getLongitude();
-                PlaceClass p = new PlaceClass(lv, x, y, NearbyPlaceActivity.this);
+                PlaceClass p = new PlaceClass(lv, x, y, NearbyPlaceActivity.this,pd);
                 p.execute();
             }
 
@@ -245,9 +271,15 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
         konumYoneticisi.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 100, konumDinleyicisi);
 
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
 
     }
+
     @Override
     protected void onPause() {
         super.onPause();
