@@ -83,10 +83,11 @@ public class TotalStatisticFragment extends Fragment{
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         maleCount[0] =Integer.parseInt(dataSnapshot.child("maleCount").getValue().toString());
                         femaleCount[0] =Integer.parseInt(dataSnapshot.child("femaleCount").getValue().toString());
-
-                        percent[0] =(int)(((maxWidth/2)-16)*(maleCount[0]/(maleCount[0]+femaleCount[0])));
-                        viewHolder.setTextViewManPercent(String.valueOf((maleCount[0]/(maleCount[0]+femaleCount[0]))*100));
-                        viewHolder.setTextViewWomanPercent(String.valueOf((femaleCount[0]/(maleCount[0]+femaleCount[0]))*100));
+                        double mRate=(float)(maleCount[0])/(maleCount[0]+femaleCount[0]);
+                        double fRate=(float)(femaleCount[0])/(maleCount[0]+femaleCount[0]);
+                        percent[0] =(int)(((maxWidth/2)-16)*mRate);
+                        viewHolder.setTextViewManPercent(String.valueOf( mRate*100));
+                        viewHolder.setTextViewWomanPercent(String.valueOf(fRate*100));
                         viewHolder.setTextViewPlaceName(dataSnapshot.child("name").getValue().toString());
 
                         if((((maxWidth/2)-16)- percent[0])==0)

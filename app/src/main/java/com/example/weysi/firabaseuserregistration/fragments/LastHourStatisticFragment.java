@@ -101,9 +101,11 @@ public class LastHourStatisticFragment extends android.support.v4.app.Fragment{
                         placeDatabase.child(placeID).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                percent=(int)(((maxWidth/2)-16)*(maleCount/(maleCount+femaleCount)));
-                                viewHolder.setTextViewManPercent(String.valueOf((maleCount/(maleCount+femaleCount))*100));
-                                viewHolder.setTextViewWomanPercent(String.valueOf((femaleCount/(maleCount+femaleCount))*100));
+                                double mRate=(float)(maleCount)/(maleCount+femaleCount);
+                                double fRate=(float)(femaleCount)/(maleCount+femaleCount);
+                                percent=(int)(((maxWidth/2)-16)*mRate);
+                                viewHolder.setTextViewManPercent(String.valueOf(mRate*100));
+                                viewHolder.setTextViewWomanPercent(String.valueOf(fRate*100));
                                 viewHolder.setTextViewPlaceName(dataSnapshot.child("name").getValue().toString());
 
                                 if((((maxWidth/2)-16)-percent)==0)
