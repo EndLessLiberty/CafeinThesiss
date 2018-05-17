@@ -28,6 +28,7 @@ import com.example.weysi.firabaseuserregistration.informations.Data;
 import com.example.weysi.firabaseuserregistration.informations.PlaceInformation;
 import com.example.weysi.firabaseuserregistration.informations.TimeLineCheckInInformation;
 import com.example.weysi.firabaseuserregistration.informations.UserInformation;
+import com.example.weysi.firabaseuserregistration.parsers.GPSTracker;
 import com.example.weysi.firabaseuserregistration.parsers.MyCheckInAddFriendTotalThread;
 import com.example.weysi.firabaseuserregistration.parsers.PlaceClass;
 import com.example.weysi.firabaseuserregistration.R;
@@ -44,6 +45,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public class NearbyPlaceActivity extends AppCompatActivity implements View.OnClickListener{
+
+
+    // flag for network status
+    boolean isNetworkEnabled = false;
+    public boolean isGPSEnabled = false;
 
     private LocationManager konumYoneticisi;
     private FirebaseAuth firebaseAuth;
@@ -64,6 +70,7 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
     private String sImage;
     private ImageButton imageButtonBack;
     private Context context;
+    GPSTracker gpsTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +81,10 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
         pd.setMessage("Yakındaki Lokasyonlar Getiriliyor...");
         pd.setCanceledOnTouchOutside(false);
         pd.show();
+     //   gpsTracker = new GPSTracker(NearbyPlaceActivity.this);
+      //  setLocationAddress();
+
+
         firebaseAuth = FirebaseAuth.getInstance();
         databaseReferenceUsersID=FirebaseDatabase.getInstance().getReference("UsersCheckIns");
         databaseCheckIn = FirebaseDatabase.getInstance().getReference("check");
@@ -92,7 +103,16 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
         context=this;
 
         lv = (ListView) findViewById(R.id.listView1);
+        x=(double)getIntent().getSerializableExtra("a");
+        y=(double)getIntent().getSerializableExtra("b");
+        if(y==0){
+            GPSTracker gpsTracker=new GPSTracker(NearbyPlaceActivity.this);
 
+            x=gpsTracker.getLatitude();
+            y=gpsTracker.getLongitude();
+        }
+        PlaceClass p = new PlaceClass(lv, x, y, NearbyPlaceActivity.this, pd);
+        p.execute();
         lv.setClickable(true);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -115,6 +135,7 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
                                 progressDialog.setTitle(data.getName());
                                 progressDialog.setMessage("Check-in işleminiz gerçekleştiriliyor...");
                                 progressDialog.show();
+
                                 message=editTextMessage.getText().toString();
                                 databaseReferenceUser.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
@@ -231,46 +252,67 @@ public class NearbyPlaceActivity extends AppCompatActivity implements View.OnCli
             }
         });
 
-        LocationListener konumDinleyicisi = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location loc) {
 
-                x = loc.getLatitude();
-                y = loc.getLongitude();
-                PlaceClass p = new PlaceClass(lv, x, y, NearbyPlaceActivity.this,pd);
-                p.execute();
-            }
+        /*
+try {
+    isNetworkEnabled = konumYoneticisi
+            .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
 
-            }
+    if (isGPSEnabled == false && isNetworkEnabled == false) {
+        // no network provider is enabled
+    }
 
-            @Override
-            public void onProviderEnabled(String s) {
+    LocationListener konumDinleyicisi = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location loc) {
 
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-
-            }
-        };
-
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
+            x = loc.getLatitude();
+            y = loc.getLongitude();
+            PlaceClass p = new PlaceClass(lv, x, y, NearbyPlaceActivity.this, pd);
+            p.execute();
         }
 
-        konumYoneticisi.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 100, konumDinleyicisi);
+        @Override
+        public void onStatusChanged(String s, int i, Bundle bundle) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String s) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String s) {
+
+        }
+    };
 
 
+    konumYoneticisi.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 100, konumDinleyicisi);
+
+}catch (SecurityException e){
+    String a="21";
+}
+
+  */
+    }
+    private void setLocationAddress() {
+        if (gpsTracker.getLocation() != null) {
+            if (gpsTracker.getLatitude() != 0 && gpsTracker.getLongitude() != 0) {
+
+                double x = gpsTracker.getLatitude();
+                double y =gpsTracker.getLongitude();
+                PlaceClass p = new PlaceClass(lv, x, y, NearbyPlaceActivity.this, pd);
+                p.execute();
+
+            } else {
+               // buildAlertMessageNoGps();
+            }
+        } else {
+            //buildAlertMessageNoGps();
+        }
     }
 
     @Override

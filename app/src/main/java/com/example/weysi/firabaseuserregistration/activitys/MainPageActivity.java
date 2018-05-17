@@ -1,22 +1,22 @@
 package com.example.weysi.firabaseuserregistration.activitys;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.drm.ProcessedData;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.example.weysi.firabaseuserregistration.R;
 import com.example.weysi.firabaseuserregistration.informations.UserInformation;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.example.weysi.firabaseuserregistration.parsers.GPSTracker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -37,7 +37,8 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
     private StorageReference storageReference;
     private DatabaseReference mUserDatabase;
    // private View header;
-
+   GPSTracker gpsTracker;
+    boolean isGPSEnabled = false;
     //view objects
 
     private ImageButton buttonLogout;
@@ -51,7 +52,7 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
     private Bitmap bmp;
     private byte[] byteArray;
     private ProgressDialog pd;
-
+    int kontrol;
 
 
 
@@ -66,6 +67,8 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
         pd.setMessage("Bilgileriniz Yükleniyor...");
         pd.setCanceledOnTouchOutside(false);
         pd.show();
+        gpsTracker = new GPSTracker(MainPageActivity.this);
+        kontrol=1;
         //initializing firebase authentication object
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -154,8 +157,42 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
             startActivity(new Intent(this, LoginActivity.class));
         } else if (view == buttonGetPlace) {
             Intent intent = new Intent(this, NearbyPlaceActivity.class);
-            //intent.putExtra("profile_photo",sImage);
-            startActivity(intent);
+            if(gpsTracker.getLatitude()==0 && kontrol==1){
+                AlertDialog.Builder builder=new AlertDialog.Builder(this);
+                builder.setTitle("Uyarı");
+                builder.setMessage("Yakın Çevreyi Görüntüleyebilmek için Konumunuzu Açınız;");
+                builder.setPositiveButton("Konumu Aç", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        Intent intent2 = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(intent2);
+
+                            kontrol=0;
+                      //  Intent intent = getIntent();
+                       // MainPageActivity.this.finish();
+                       // startActivity(intent);
+
+                       // Intent intent=new Intent("android.location.GPS_ENABLED_CHANGE");
+                       // intent.putExtra("enabled", true);
+                       // sendBroadcast(intent);
+                    }
+                }).setNegativeButton("İptal Et", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+                Dialog dialog2=builder.create();
+                dialog2.show();
+            }else {
+                gpsTracker = new GPSTracker(MainPageActivity.this);
+
+                intent.putExtra("a", gpsTracker.getLatitude());
+                intent.putExtra("b", gpsTracker.getLongitude());
+                startActivity(intent);
+            }
         } else if (view == circleImageView) {
             Intent intent = new Intent(getApplicationContext(), PersonalUserProfileActivity.class);
             //intent.putExtra("profile_photo",sImage);
