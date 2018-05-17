@@ -1,20 +1,30 @@
 package com.example.weysi.firabaseuserregistration.activitys;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.EventLogTags;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.weysi.firabaseuserregistration.R;
+import com.example.weysi.firabaseuserregistration.adapters.UserListAdapter;
+import com.example.weysi.firabaseuserregistration.fragments.FriendsFragment;
+import com.example.weysi.firabaseuserregistration.fragments.PersonelTimeLineFragment;
 import com.example.weysi.firabaseuserregistration.informations.PlaceInformation;
+import com.example.weysi.firabaseuserregistration.informations.UserInformation;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
@@ -37,6 +47,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PlaceActivity extends AppCompatActivity implements View.OnClickListener{
     PieChart pieChart ;
@@ -46,6 +57,7 @@ public class PlaceActivity extends AppCompatActivity implements View.OnClickList
     PieData pieData ;
     private DatabaseReference mPlaceDatabaseReference;
     private DatabaseReference mInPlaceCheckInsDatabaseReference;
+    private DatabaseReference mUsersDatabaseReference;
     private long start;
     private long end;
     private long count;
@@ -63,6 +75,9 @@ public class PlaceActivity extends AppCompatActivity implements View.OnClickList
     private  TextView birSaatlikSayacTextView;
     private TextView tumZamanlarSayaciTextView;
     private TextView bilgiTextView;
+    private Context context;
+    ListView listViewUsers;
+    List<UserInformation> userInformationList;
 
 
 
@@ -70,7 +85,7 @@ public class PlaceActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place);
-
+        context=this;
         final ProgressDialog pd=new ProgressDialog(this);
         pd.setMessage("Sayfa Bilgileri Getiriliyor...");
         pd.setCanceledOnTouchOutside(false);
@@ -81,6 +96,7 @@ public class PlaceActivity extends AppCompatActivity implements View.OnClickList
         mekanAdiTextView = (TextView)findViewById(R.id.mekanAdiTextView);
         mekanAdresiTextView = (TextView)findViewById(R.id.mekanAdresiTextView);
         birSaatlikSayacTextView = (TextView)findViewById(R.id.birSaatlikSayac);
+
         tumZamanlarSayaciTextView = (TextView)findViewById(R.id.tumZamanlarSayaci);
         bilgiTextView=(TextView)findViewById(R.id.textViewBilgi);
         pieChart = (PieChart) findViewById(R.id.chart1);
@@ -102,21 +118,71 @@ public class PlaceActivity extends AppCompatActivity implements View.OnClickList
 
         start = System.currentTimeMillis();
         end = start-3600000;
-
+        userInformationList=new ArrayList<>();
         Query checkQuery = mInPlaceCheckInsDatabaseReference.orderByChild("checkInTime").startAt((-1)*start).endAt((-1)*end);
         checkQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                userInformationList.clear();
                 count = dataSnapshot.getChildrenCount();
                 birSaatlikSayacTextView.setText(String.valueOf(count));
                 if(dataSnapshot.hasChildren())
                 {
                     for(DataSnapshot postsnapshot:dataSnapshot.getChildren()) {
+                        final UserInformation userInformation = (UserInformation) postsnapshot.getValue(UserInformation.class);
+                        userInformation.setName(postsnapshot.child("userName").getValue().toString());
+                        mUsersDatabaseReference = FirebaseDatabase.getInstance().getReference("Users").child(userInformation.getUserID());
+                        mUsersDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                String userImage = dataSnapshot.child("image").getValue().toString();
+
+                                userInformation.setImage(userImage);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                        userInformationList.add(userInformation);
                         if(postsnapshot.child("cinsiyet").getValue().toString().compareTo("Erkek")==0)
                             hmaleCount++;
                         else
                             hfemaleCount++;
                     }
+                    birSaatlikSayacTextView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            final Dialog dialog = new Dialog(context);
+                            dialog.setContentView(R.layout.activity_in_place_check_in);
+
+                            dialog.setTitle("Şimdi Buradakiler");
+
+                            listViewUsers =(ListView) dialog.findViewById(R.id.listViewUsers);
+                            listViewUsers.setClickable(true);
+                            listViewUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                                    Object o = listViewUsers.getItemAtPosition(position);
+                                    UserInformation userInformation=(UserInformation) o;
+                                    Intent intent=new Intent(getApplicationContext(),AnotherUserProfileActivity.class);
+                                    intent.putExtra("UserID",userInformation.getUserID());
+                                    startActivity(intent);
+                                }
+                            });
+
+                            if(userInformationList.size()!=0) {
+                                UserListAdapter userListAdapter = new UserListAdapter(PlaceActivity.this, userInformationList,getResources());
+
+                                listViewUsers.setAdapter(userListAdapter);
+                            }
+                            dialog.show();
+
+
+                        }
+                    });
+
                 }
                 else
                 {
@@ -183,6 +249,7 @@ public class PlaceActivity extends AppCompatActivity implements View.OnClickList
 
             }
         });
+
 
     }
 
