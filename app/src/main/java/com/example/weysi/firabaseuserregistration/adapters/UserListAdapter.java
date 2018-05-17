@@ -1,8 +1,12 @@
 package com.example.weysi.firabaseuserregistration.adapters;
 
 import android.app.Activity;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,13 +31,16 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserListAdapter extends ArrayAdapter<UserInformation> {
     private StorageReference storageReference;
+    private  Resources resources;
     private List<UserInformation> userInformationList;
     private Activity context;
-    public UserListAdapter(@NonNull Activity context,  List<UserInformation> userInformationList) {
+    public UserListAdapter(@NonNull Activity context, List<UserInformation> userInformationList, Resources resources) {
         super(context, R.layout.place_list_layout, userInformationList);
         this.context=context;
         this.userInformationList=userInformationList;
+        this.resources = resources;
     }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -45,37 +52,26 @@ public class UserListAdapter extends ArrayAdapter<UserInformation> {
         final CircleImageView imageViewResim=(CircleImageView)  listViewItem.findViewById(R.id.user_single_image);
         TextView textViewPlaceName = (TextView) listViewItem.findViewById(R.id.user_single_name);
         TextView textViewNickName = (TextView) listViewItem.findViewById(R.id.user_single_status);
+        textViewNickName.setVisibility(View.INVISIBLE);
 
         final    UserInformation userInformation=userInformationList.get(position);
-        textViewNickName.setText(userInformation.getNickName());
+        //textViewNickName.setText(userInformation.getNickName());
         textViewPlaceName.setText(userInformation.getName());
+        Bitmap bmp;
+        if(userInformation.getImage().compareTo("default")==0)
+        {
+            bmp= BitmapFactory.decodeResource(resources, R.drawable.default_avatar);
 
-        storageReference = FirebaseStorage.getInstance().getReference(userInformation.getUserID());
-        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-
-                //Picasso.with(context).load(uri).fit().centerCrop().into(holder.userImage);
-                /*Glide.with(context)
-                        .load(uri)
-                        .asBitmap()
-                        .centerCrop()
-                        .into(new SimpleTarget<Bitmap>(200,200) {
-                            @Override
-                            public void onResourceReady(Bitmap resource,GlideAnimation glideAnimation) {
-                                imageViewResim.setImageBitmap(resource);
-                            }
-                        });*/ // Zaman tünelinde çökmeye
-                Picasso.with(context).load(uri).placeholder(R.drawable.default_avatar).into(imageViewResim);
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
+        }
+        else
+        {
+            byte []byteArray = Base64.decode(userInformation.getImage(), Base64.DEFAULT);
+            bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+        }
+        imageViewResim.setImageBitmap(bmp);
 
 
-            }
-        });
+
         return listViewItem;
     }
 
