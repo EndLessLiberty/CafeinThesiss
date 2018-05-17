@@ -192,11 +192,13 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
     public static class searchResultViewHolder extends RecyclerView.ViewHolder {
 
         View mView;
+        TextView textViewStatus;
 
         public searchResultViewHolder(View itemView) {
             super(itemView);
-
             mView = itemView;
+            textViewStatus=mView.findViewById(R.id.user_single_status);
+            textViewStatus.setVisibility(View.INVISIBLE);
 
         }
 
